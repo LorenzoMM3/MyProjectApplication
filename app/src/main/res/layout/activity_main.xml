@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="98dp"
+        android:background="@color/green"
+        android:baselineAligned="false"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="10dp"
+            android:fontFamily="@font/arimo"
+            android:letterSpacing="0.6"
+            android:paddingTop="10dp"
+            android:text="Your City Listenin'"
+            android:textAlignment="center"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textStyle="bold|italic"
+            app:lineHeight="30dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="107dp"
+        android:background="@color/lightgreen"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btnMyUploads"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="1dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginRight="1dp"
+            android:layout_marginBottom="5dp"
+            android:textColor="@color/white"
+            android:layout_weight="1"
+            android:backgroundTint="@color/green"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:text="My Uploads"
+            android:textSize="16sp"
+            app:cornerRadius="0dp" />
+
+        <Button
+            android:id="@+id/btnRecord"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="1dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginRight="1dp"
+            android:layout_marginBottom="5dp"
+            android:layout_weight="1"
+            android:backgroundTint="@color/green"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:text="Record"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            app:cornerRadius="0dp"
+            app:strokeColor="#8BC34A" />
+
+        <Button
+            android:id="@+id/btnCityMap"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="1dp"
+            android:layout_marginTop="0dp"
+            android:textColor="@color/white"
+            android:layout_marginRight="1dp"
+            android:layout_marginBottom="5dp"
+            android:layout_weight="1"
+            android:backgroundTint="@color/green"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:text="City Map"
+            android:textSize="16sp"
+            app:cornerRadius="0dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/fragmentContainerView3"
+            android:name="com.example.myprojectapplication.RecordFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:layout="@layout/fragment_record" />
+    </LinearLayout>
+
+</LinearLayout>
