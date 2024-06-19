@@ -61,7 +61,18 @@
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
             android:fontFamily="@font/arimo"
-            android:text="Altro: "
+            android:text="ClientId: "
+            android:textAlignment="center"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/textView6ma2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:fontFamily="@font/arimo"
+            android:text="ClientToken: "
             android:textAlignment="center"
             android:textSize="20sp"
             android:textStyle="bold" />

@@ -12,12 +12,16 @@ class HelpActivity : AppCompatActivity() {
 
         val username = intent.getStringExtra("username")
         val password = intent.getStringExtra("password")
+        val clientId = intent.getIntExtra("clientId", -1)
+        val clientToken = intent.getStringExtra("clientToken")
         val btnGoBack1h: Button = findViewById(R.id.btnBack1h)
 
         btnGoBack1h.setOnClickListener {
             val intent = Intent(this, MainActivity::class.java)
             intent.putExtra("username", username)
             intent.putExtra("password", password)
+            intent.putExtra("clientId", clientId)
+            intent.putExtra("clientToken", clientToken)
             startActivity(intent)
         }
 

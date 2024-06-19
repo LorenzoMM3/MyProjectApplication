@@ -19,20 +19,27 @@ class MyAccountActivity : AppCompatActivity() {
         val textViewPswString: String = textViewPsw.text.toString()
         val textViewTotUploads: TextView = findViewById(R.id.textView5ma)
         val textViewTotUploadsString: String = textViewTotUploads.text.toString()
-        val textViewAltro: TextView = findViewById(R.id.textView6ma)
-        val textViewAltroString: String = textViewAltro.text.toString()
+        val textViewClientId: TextView = findViewById(R.id.textView6ma)
+        val textViewClientIdString: String = textViewClientId.text.toString()
+        val textViewToken: TextView = findViewById(R.id.textView6ma2)
+        val textViewTokenString: String = textViewToken.text.toString()
         val username = intent.getStringExtra("username")
         val password = intent.getStringExtra("password")
+        val clientId = intent.getIntExtra("clientId", -1)
+        val clientToken = intent.getStringExtra("clientToken")
 
         textViewUser.text = textViewUserString + username
         textViewPsw.text = textViewPswString + password
         textViewTotUploads.text = textViewTotUploadsString + "0"
-        textViewAltro.text = textViewAltroString + "Altro"
+        textViewClientId.text = textViewClientIdString + " " + clientId
+        textViewToken.text = textViewTokenString + " " + clientToken
 
         btnGoBack.setOnClickListener {
             val intent = Intent(this, MainActivity::class.java)
             intent.putExtra("username", username)
             intent.putExtra("password", password)
+            intent.putExtra("clientId", clientId)
+            intent.putExtra("clientToken", clientToken)
             startActivity(intent)
         }
 

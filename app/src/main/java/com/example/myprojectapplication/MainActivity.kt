@@ -21,9 +21,11 @@ class MainActivity : AppCompatActivity() {
 
         val username = intent.getStringExtra("username")
         val password = intent.getStringExtra("password")
+        val clientId = intent.getIntExtra("clientId", -1)
+        val clientToken = intent.getStringExtra("clientToken")
 
         val welcomeMsgString = welcomeMsg.text.toString()
-        welcomeMsg.text = welcomeMsgString +" "+ username
+        welcomeMsg.text = welcomeMsgString + username
 
         btnRecord.setOnClickListener {
             replaceFragment(RecordFragment())
@@ -41,6 +43,8 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, HelpActivity::class.java)
             intent.putExtra("username", username)
             intent.putExtra("password", password)
+            intent.putExtra("clientId", clientId)
+            intent.putExtra("clientToken", clientToken)
             startActivity(intent)
         }
 
@@ -48,6 +52,8 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, MyAccountActivity::class.java)
             intent.putExtra("username", username)
             intent.putExtra("password", password)
+            intent.putExtra("clientId", clientId)
+            intent.putExtra("clientToken", clientToken)
             startActivity(intent)
         }
 
