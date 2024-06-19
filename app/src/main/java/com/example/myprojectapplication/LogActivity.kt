@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
-import android.widget.Toast
 
 class LogActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -21,8 +20,6 @@ class LogActivity : AppCompatActivity() {
             val intent = Intent(this, MainActivity::class.java)
             intent.putExtra("username", username.text.toString())
             intent.putExtra("password", password.text.toString())
-            Toast.makeText(this, username.text.toString(), Toast.LENGTH_SHORT).show()
-            Toast.makeText(this, password.text.toString(), Toast.LENGTH_SHORT).show()
             startActivity(intent)
         }
 

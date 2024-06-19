@@ -1,5 +1,6 @@
 package com.example.myprojectapplication
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
@@ -15,12 +16,14 @@ class MainActivity : AppCompatActivity() {
         val btnMyUploads: Button = findViewById(R.id.btnMyUploads)
         val btnCityMap: Button = findViewById(R.id.btnCityMap)
         val welcomeMsg: TextView = findViewById(R.id.textViewWelcome)
+        val btnHelp: Button = findViewById(R.id.btnHelp)
+        val btnMyAccount: Button = findViewById(R.id.btnMyAccount)
 
         val username = intent.getStringExtra("username")
         val password = intent.getStringExtra("password")
 
         val welcomeMsgString = welcomeMsg.text.toString()
-        welcomeMsg.text = welcomeMsgString + " " + username + " " + password
+        welcomeMsg.text = welcomeMsgString +" "+ username
 
         btnRecord.setOnClickListener {
             replaceFragment(RecordFragment())
@@ -32,6 +35,20 @@ class MainActivity : AppCompatActivity() {
 
         btnCityMap.setOnClickListener {
             replaceFragment(MapFragment())
+        }
+
+        btnHelp.setOnClickListener {
+            val intent = Intent(this, HelpActivity::class.java)
+            intent.putExtra("username", username)
+            intent.putExtra("password", password)
+            startActivity(intent)
+        }
+
+        btnMyAccount.setOnClickListener {
+            val intent = Intent(this, MyAccountActivity::class.java)
+            intent.putExtra("username", username)
+            intent.putExtra("password", password)
+            startActivity(intent)
         }
 
     }

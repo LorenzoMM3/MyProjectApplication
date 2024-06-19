@@ -9,8 +9,8 @@
 
     <View
         android:id="@+id/topview"
-        android:layout_width="393dp"
-        android:layout_height="360dp"
+        android:layout_width="465dp"
+        android:layout_height="363dp"
         android:background="@drawable/wave_background"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.555"
