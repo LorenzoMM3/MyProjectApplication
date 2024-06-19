@@ -9,31 +9,66 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="98dp"
+        android:layout_height="150dp"
         android:background="@color/green"
         android:baselineAligned="false"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/textView"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="10dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnHelp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:backgroundTint="@color/green"
+                android:text="Help" />
+
+            <Button
+                android:id="@+id/btnMyAccount"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:backgroundTint="@color/green"
+                android:text="My Account" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/textViewTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
             android:fontFamily="@font/arimo"
             android:letterSpacing="0.6"
-            android:paddingTop="10dp"
-            android:text="Your City Listenin'"
+            android:paddingTop="5dp"
+            android:text="Your City Listenin' to"
             android:textAlignment="center"
             android:textAllCaps="false"
             android:textColor="@color/white"
             android:textSize="20sp"
             android:textStyle="bold|italic"
             app:lineHeight="30dp" />
+
+        <TextView
+            android:id="@+id/textViewWelcome"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="4dp"
+            android:paddingTop="7dp"
+            android:text="Welcome back,  "
+            android:textAlignment="center"
+            android:textColor="@color/white" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="107dp"
+        android:layout_height="102dp"
         android:background="@color/lightgreen"
         android:orientation="horizontal">
 
@@ -45,12 +80,12 @@
             android:layout_marginTop="0dp"
             android:layout_marginRight="1dp"
             android:layout_marginBottom="5dp"
-            android:textColor="@color/white"
             android:layout_weight="1"
             android:backgroundTint="@color/green"
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
             android:text="My Uploads"
+            android:textColor="@color/white"
             android:textSize="16sp"
             app:cornerRadius="0dp" />
 
@@ -78,7 +113,6 @@
             android:layout_height="match_parent"
             android:layout_marginLeft="1dp"
             android:layout_marginTop="0dp"
-            android:textColor="@color/white"
             android:layout_marginRight="1dp"
             android:layout_marginBottom="5dp"
             android:layout_weight="1"
@@ -86,6 +120,7 @@
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
             android:text="City Map"
+            android:textColor="@color/white"
             android:textSize="16sp"
             app:cornerRadius="0dp" />
     </LinearLayout>
