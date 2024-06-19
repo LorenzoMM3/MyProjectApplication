@@ -5,11 +5,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@color/lightgreen"
     tools:context=".MainActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="150dp"
+        android:layout_height="159dp"
         android:background="@color/green"
         android:baselineAligned="false"
         android:orientation="vertical">
@@ -25,7 +26,8 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:backgroundTint="@color/green"
-                android:text="Help" />
+                android:text="Help"
+                android:textColor="@color/white" />
 
             <Button
                 android:id="@+id/btnMyAccount"
@@ -33,7 +35,8 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:backgroundTint="@color/green"
-                android:text="My Account" />
+                android:text="My Account"
+                android:textColor="@color/white" />
 
         </LinearLayout>
 
@@ -59,7 +62,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="2dp"
-            android:layout_marginBottom="4dp"
+            android:layout_marginBottom="5dp"
             android:paddingTop="7dp"
             android:text="Welcome back,  "
             android:textAlignment="center"

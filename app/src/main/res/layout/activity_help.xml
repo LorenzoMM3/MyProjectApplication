@@ -48,8 +48,9 @@
             android:id="@+id/btnBack1h"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:backgroundTint="@color/green"
+            android:textColor="@color/white"
             android:layout_margin="5dp"
-            android:backgroundTint="#4CAF50"
             android:text="Go Back"
             android:textSize="18sp" />
 

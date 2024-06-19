@@ -15,7 +15,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="64dp"
-
+            android:textColor="@color/white"
             android:layout_marginTop="40dp"
             android:text="Record"
             android:textAlignment="center"
@@ -31,7 +31,8 @@
                 android:layout_width="220dp"
                 android:layout_height="220dp"
                 android:backgroundTint="@color/green"
-                android:text="Start LIstenin'"
+                android:text="Start Listenin'"
+                android:textColor="@color/white"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
