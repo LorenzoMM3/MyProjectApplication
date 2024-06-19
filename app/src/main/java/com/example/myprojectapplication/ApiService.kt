@@ -13,6 +13,7 @@ data class TokenRequest(val username: String, val password: String)
 data class TokenResponse(val client_id: Int, val client_secret: String)
 data class DeleteResponse(val detail: String)
 
+
 interface ApiService {
     @POST("auth")
     fun signUp(@Body request: SignUpRequest): Call<SignUpResponse>

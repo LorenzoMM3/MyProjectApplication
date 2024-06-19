@@ -23,6 +23,7 @@ class MyAccountActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_my_account)
 
+
         val btnGoBack: Button = findViewById(R.id.btnBack1ma)
         val btnDeleteAccount: Button = findViewById(R.id.btnDeleteAccount)
         val textViewUser: TextView = findViewById(R.id.textView2ma)
@@ -53,7 +54,7 @@ class MyAccountActivity : AppCompatActivity() {
         btnDeleteAccount.setOnClickListener {
 
             if (username.isNullOrEmpty() || password.isNullOrEmpty() || clientToken.isNullOrEmpty()) {
-                Toast.makeText(this, "Username, password e token non possono essere vuoti", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "Username, password or token is null", Toast.LENGTH_LONG).show()
                 return@setOnClickListener
             }
 
