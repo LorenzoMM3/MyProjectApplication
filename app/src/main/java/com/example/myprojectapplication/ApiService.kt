@@ -11,7 +11,6 @@ data class SignUpRequest(val username: String, val password: String)
 data class SignUpResponse(val username: String, val id: Int)
 data class TokenRequest(val username: String, val password: String)
 data class TokenResponse(val client_id: Int, val client_secret: String)
-data class DeleteRequest(val username: String, val password: String)
 data class DeleteResponse(val detail: String)
 
 interface ApiService {
@@ -22,9 +21,6 @@ interface ApiService {
     @POST("auth/token")
     fun getToken(@Field("username") username: String, @Field("password") password: String): Call<TokenResponse>
 
-    @HTTP(method = "DELETE", path = "auth/unsubscribe", hasBody = true)
-    fun deleteUser(
-        @Header("Authorization") authHeader: String,
-        @Body request: DeleteRequest
-    ): Call<DeleteResponse>
+    @DELETE("auth/unsubscribe")
+    fun deleteUser(@Header("Authorization") authHeader: String): Call<DeleteResponse>
 }

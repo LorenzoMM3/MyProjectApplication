@@ -1,7 +1,6 @@
 package com.example.myprojectapplication
 
 import ApiService
-import DeleteRequest
 import DeleteResponse
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -61,8 +60,7 @@ class MyAccountActivity : AppCompatActivity() {
             val intent = Intent(this, LogActivity::class.java)
 
             val authHeader = "Bearer $clientToken"
-            val deleteRequest = DeleteRequest(username, password)
-            apiService.deleteUser(authHeader, deleteRequest).enqueue(object : Callback<DeleteResponse> {
+            apiService.deleteUser(authHeader).enqueue(object : Callback<DeleteResponse> {
                 override fun onResponse(call: Call<DeleteResponse>, response: Response<DeleteResponse>) {
                     if (response.isSuccessful) {
                         val responseBody = response.body()
