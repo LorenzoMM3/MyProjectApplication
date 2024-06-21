@@ -4,10 +4,12 @@ import ApiService
 import ResponseAllUploads
 import ResponseMyUploads
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
@@ -104,7 +106,37 @@ class MyUploadsFragment : Fragment() {
                 textSize = 16f
                 setPadding(0, 16, 0, 16)
             }
-            uploadsContainer.addView(textView)
+
+            val moreInfoButton = Button(context).apply {
+                text = "More Info"
+                setOnClickListener {
+                    val intent = Intent(context, MoreInfoActivity::class.java).apply {
+                        putExtra("uploadId", upload.id)
+                        putExtra("token", token)
+                    }
+                    context.startActivity(intent)
+                }
+            }
+
+            val HideFileButton = Button(context).apply {
+                text = "Hide File"
+
+            }
+
+            val ShowFileButton = Button(context).apply {
+                text = "Show File"
+
+            }
+
+            val layout = LinearLayout(context).apply {
+                orientation = LinearLayout.VERTICAL
+                addView(textView)
+                addView(moreInfoButton)
+                addView(HideFileButton)
+                addView(ShowFileButton)
+            }
+
+            uploadsContainer.addView(layout)
         }
     }
 
@@ -114,17 +146,36 @@ class MyUploadsFragment : Fragment() {
         uploads.forEach { upload ->
             val textView = TextView(context).apply {
                 text = """
-                    ID: ${upload.id}
-                    Longitude: ${upload.longitude}
-                    Latitude: ${upload.latitude}
-                """.trimIndent()
+                ID: ${upload.id}
+                Longitude: ${upload.longitude}
+                Latitude: ${upload.latitude}
+            """.trimIndent()
                 setTextColor(resources.getColor(R.color.black, null))
                 textSize = 16f
                 setPadding(0, 16, 0, 16)
             }
-            uploadsContainer2.addView(textView)
+
+            val moreInfoButton = Button(context).apply {
+                text = "More Info"
+                setOnClickListener {
+                    val intent = Intent(context, MoreInfoActivity::class.java).apply {
+                        putExtra("uploadId", upload.id)
+                        putExtra("token", token)
+                    }
+                    context.startActivity(intent)
+                }
+            }
+
+            val layout = LinearLayout(context).apply {
+                orientation = LinearLayout.VERTICAL
+                addView(textView)
+                addView(moreInfoButton)
+            }
+
+            uploadsContainer2.addView(layout)
         }
     }
+
 
     companion object {
         @JvmStatic

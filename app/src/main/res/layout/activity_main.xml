@@ -86,7 +86,7 @@
             android:backgroundTint="@color/green"
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
-            android:text="My Uploads"
+            android:text="Uploads"
             android:textColor="@color/white"
             android:textSize="16sp"
             app:cornerRadius="0dp" />
