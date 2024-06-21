@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         btnMyUploads.setOnClickListener {
-            replaceFragment(MyUploadsFragment())
+            replaceFragment(MyUploadsFragment.newInstance(clientToken ?: ""))
         }
 
         btnCityMap.setOnClickListener {

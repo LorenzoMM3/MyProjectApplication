@@ -1,31 +1,32 @@
 package com.example.myprojectapplication
 
+import ApiService
+import ResponseAllUploads
+import ResponseMyUploads
+import android.annotation.SuppressLint
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
+import android.widget.TextView
+import android.widget.Toast
+import androidx.fragment.app.Fragment
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+private const val ARG_TOKEN = "token"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [MyUploadsFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class MyUploadsFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    private var token: String? = null
+    private lateinit var uploadsContainer: LinearLayout
+    private lateinit var uploadsContainer2: LinearLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+            token = it.getString(ARG_TOKEN)
         }
     }
 
@@ -33,26 +34,104 @@ class MyUploadsFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_my_uploads, container, false)
+        val view = inflater.inflate(R.layout.fragment_my_uploads, container, false)
+        uploadsContainer = view.findViewById(R.id.uploadsContainer)
+        uploadsContainer2 = view.findViewById(R.id.uploadsContainer2)
+
+        token?.let { fetchMyUploads(it) }
+        token?.let { fetchAllUploads(it) }
+
+        return view
+    }
+
+    private fun fetchMyUploads(token: String) {
+        val apiService = ApiClient.instance.create(ApiService::class.java)
+        val call = apiService.SeeMyUploads("Bearer $token")
+
+        call.enqueue(object : Callback<List<ResponseMyUploads>> {
+            override fun onResponse(call: Call<List<ResponseMyUploads>>, response: Response<List<ResponseMyUploads>>) {
+                if (response.isSuccessful) {
+                    val uploads = response.body()
+                    uploads?.let {
+                        displayUploads(it)
+                    }
+                } else {
+                    Toast.makeText(context, "Errore: ${response.errorBody()?.string()}", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<List<ResponseMyUploads>>, t: Throwable) {
+                Toast.makeText(context, "Errore: ${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+    private fun fetchAllUploads(token: String) {
+        val apiService = ApiClient.instance.create(ApiService::class.java)
+        val call = apiService.SeeAllUploads("Bearer $token")
+
+        call.enqueue(object : Callback<List<ResponseAllUploads>> {
+            override fun onResponse(call: Call<List<ResponseAllUploads>>, response: Response<List<ResponseAllUploads>>) {
+                if (response.isSuccessful) {
+                    val uploads = response.body()
+                    uploads?.let {
+                        displayAllUploads(it)
+                    }
+                } else {
+                    Toast.makeText(context, "Errore: ${response.errorBody()?.string()}", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<List<ResponseAllUploads>>, t: Throwable) {
+                Toast.makeText(context, "Errore: ${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun displayUploads(uploads: List<ResponseMyUploads>) {
+        uploadsContainer.removeAllViews()
+        uploads.forEach { upload ->
+            val textView = TextView(context).apply {
+                text = """
+                    ID: ${upload.id}
+                    Longitude: ${upload.longitude}
+                    Latitude: ${upload.latitude}
+                    Hidden: ${upload.hidden}
+                    Uploaded: ${upload.uploaded}
+                """.trimIndent()
+                setTextColor(resources.getColor(R.color.black, null))
+                textSize = 16f
+                setPadding(0, 16, 0, 16)
+            }
+            uploadsContainer.addView(textView)
+        }
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun displayAllUploads(uploads: List<ResponseAllUploads>) {
+        uploadsContainer2.removeAllViews()
+        uploads.forEach { upload ->
+            val textView = TextView(context).apply {
+                text = """
+                    ID: ${upload.id}
+                    Longitude: ${upload.longitude}
+                    Latitude: ${upload.latitude}
+                """.trimIndent()
+                setTextColor(resources.getColor(R.color.black, null))
+                textSize = 16f
+                setPadding(0, 16, 0, 16)
+            }
+            uploadsContainer2.addView(textView)
+        }
     }
 
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment MyUploadsFragment.
-         */
-        // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(param1: String, param2: String) =
+        fun newInstance(token: String) =
             MyUploadsFragment().apply {
                 arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+                    putString(ARG_TOKEN, token)
                 }
             }
     }
