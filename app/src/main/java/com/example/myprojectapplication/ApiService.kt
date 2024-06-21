@@ -205,6 +205,9 @@ data class Instrument(
     val violin: Float,
     val voice: Float
 )
+data class ResponseHideFile(val detail: String)
+data class ResponseShowFile(val detail: String)
+data class ResponseDeleteFile(val detail: String)
 
 interface ApiService {
     @POST("auth")
@@ -225,4 +228,13 @@ interface ApiService {
 
     @GET("audio/{id}")
     fun SeeMoreInfo(@Header("Authorization") authHeader: String, @Path("id") id:Int): Call<ResponseMoreInfo>
+    @DELETE("audio/my/{id}")
+    fun deleteFile(@Header("Authorization") authHeader: String, @Path("id") id:Int): Call<ResponseDeleteFile>
+
+    @GET("audio/my/{id}/show")
+    fun showFile(@Header("Authorization") authHeader: String, @Path("id") id:Int): Call<ResponseShowFile>
+
+    @GET("audio/my/{id}/hide")
+    fun hideFile(@Header("Authorization") authHeader: String, @Path("id") id:Int): Call<ResponseHideFile>
+
 }

@@ -2,7 +2,11 @@ package com.example.myprojectapplication
 
 import ApiService
 import ResponseAllUploads
+import android.widget.Toast
+import ResponseDeleteFile
+import ResponseHideFile
 import ResponseMyUploads
+import ResponseShowFile
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
@@ -12,7 +16,6 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import retrofit2.Call
 import retrofit2.Callback
@@ -76,15 +79,73 @@ class MyUploadsFragment : Fragment() {
             override fun onResponse(call: Call<List<ResponseAllUploads>>, response: Response<List<ResponseAllUploads>>) {
                 if (response.isSuccessful) {
                     val uploads = response.body()
-                    uploads?.let {
-                        displayAllUploads(it)
-                    }
+                        uploads?.let {
+                            displayAllUploads(it)
+                        }
                 } else {
                     Toast.makeText(context, "Errore: ${response.errorBody()?.string()}", Toast.LENGTH_SHORT).show()
                 }
             }
 
             override fun onFailure(call: Call<List<ResponseAllUploads>>, t: Throwable) {
+                Toast.makeText(context, "Errore: ${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+    private fun DeleteFile(token: String, id: Int) {
+        val apiService = ApiClient.instance.create(ApiService::class.java)
+        val call = apiService.deleteFile("Bearer $token", id)
+
+        call.enqueue(object : Callback<ResponseDeleteFile> {
+            override fun onResponse(call: Call<ResponseDeleteFile>, response: Response<ResponseDeleteFile>) {
+                if (response.isSuccessful) {
+                    val uploads = response.body()
+                    Toast.makeText(context, uploads.toString(), Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(context, "Errore: ${response.errorBody()?.string()}", Toast.LENGTH_SHORT).show()
+                }
+            }
+            override fun onFailure(call: Call<ResponseDeleteFile>, t: Throwable) {
+                Toast.makeText(context, "Errore: ${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+    private fun ShowUpload(token: String,  id: Int) {
+        val apiService = ApiClient.instance.create(ApiService::class.java)
+        val call = apiService.showFile("Bearer $token", id)
+
+        call.enqueue(object : Callback<ResponseShowFile> {
+            override fun onResponse(call: Call<ResponseShowFile>, response: Response<ResponseShowFile>) {
+                if (response.isSuccessful) {
+                    val uploads = response.body()
+                    Toast.makeText(context, uploads.toString(), Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(context, "Errore: ${response.errorBody()?.string()}", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<ResponseShowFile>, t: Throwable) {
+                Toast.makeText(context, "Errore: ${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+    private fun HideUpload(token: String,  id: Int) {
+        val apiService = ApiClient.instance.create(ApiService::class.java)
+        val call = apiService.hideFile("Bearer $token", id)
+
+        call.enqueue(object : Callback<ResponseHideFile> {
+            override fun onResponse(call: Call<ResponseHideFile>, response: Response<ResponseHideFile>) {
+                if (response.isSuccessful) {
+                    val uploads = response.body()
+                    Toast.makeText(context, uploads.toString(), Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(context, "Errore: ${response.errorBody()?.string()}", Toast.LENGTH_SHORT).show()
+                }
+            }
+            override fun onFailure(call: Call<ResponseHideFile>, t: Throwable) {
                 Toast.makeText(context, "Errore: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
@@ -120,12 +181,23 @@ class MyUploadsFragment : Fragment() {
 
             val HideFileButton = Button(context).apply {
                 text = "Hide File"
-
+                setOnClickListener {
+                    token?.let { it1 -> HideUpload(it1, upload.id) }
+                }
             }
 
             val ShowFileButton = Button(context).apply {
                 text = "Show File"
+                setOnClickListener {
+                    token?.let { it1 -> ShowUpload(it1, upload.id) }
+                }
+            }
 
+            val DeleteFileButton = Button(context).apply {
+                text = "Delete File"
+                setOnClickListener {
+                    token?.let { it1 -> DeleteFile(it1, upload.id) }
+                }
             }
 
             val layout = LinearLayout(context).apply {
@@ -134,8 +206,8 @@ class MyUploadsFragment : Fragment() {
                 addView(moreInfoButton)
                 addView(HideFileButton)
                 addView(ShowFileButton)
+                addView(DeleteFileButton)
             }
-
             uploadsContainer.addView(layout)
         }
     }
