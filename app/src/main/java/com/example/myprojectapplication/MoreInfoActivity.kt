@@ -4,6 +4,7 @@ import ApiService
 import ResponseMoreInfo
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.text.Html
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -68,24 +69,42 @@ class MoreInfoActivity : AppCompatActivity() {
 
     @SuppressLint("SetTextI18n")
     private fun displayMoreInfo(info: ResponseMoreInfo) {
-        val infoTextView = TextView(this).apply {
-            text = """
-                ID: ${info.id}
-                Longitude: ${info.longitude}
-                Latitude: ${info.latitude}
-                Creator ID: ${info.creator_id}
-                Creator Username: ${info.creator_username}
-                BPM: ${info.tags.bpm}
-                Danceability: ${info.tags.danceability}
-                Loudness: ${info.tags.loudness}
-                Mood: ${info.tags.mood}
-                Genre: ${info.tags.genre}
-                Instrument: ${info.tags.instrument}
-            """.trimIndent()
-            textSize = 16f
-            setPadding(0, 16, 0, 16)
+        fun formatPercentage(value: Double): String {
+            return String.format("%.2f%%", value * 100)
+        }
+        val top5Mood = info.tags.mood.entries.sortedByDescending { it.value }.take(5)
+        val top5Genre = info.tags.genre.entries.sortedByDescending { it.value }.take(5)
+        val top5Instrument = info.tags.instrument.entries.sortedByDescending { it.value }.take(5)
+        val infoText = buildString {
+            appendLine("<b>ID:</b> ${info.id}<br>")
+            appendLine("<b>Longitude:</b> ${info.longitude}<br>")
+            appendLine("<b>Latitude:</b> ${info.latitude}<br>")
+            appendLine("<b>Creator ID:</b> ${info.creator_id}<br>")
+            appendLine("<b>Creator Username:</b> ${info.creator_username}<br>")
+            appendLine("<b>BPM:</b> ${info.tags.bpm}<br>")
+            appendLine("<b>Danceability:</b> ${info.tags.danceability}<br>")
+            appendLine("<b>Loudness:</b> ${info.tags.loudness}<br>")
+            appendLine("<b>Top 5 Mood:</b><br>")
+            top5Mood.forEach { (key, value) ->
+                appendLine("$key: ${formatPercentage(value)}<br>")
+            }
+            appendLine("<b>Top 5 Genre:</b><br>")
+            top5Genre.forEach { (key, value) ->
+                appendLine("$key: ${formatPercentage(value)}<br>")
+            }
+            appendLine("<b>Top 5 Instrument:</b><br>")
+            top5Instrument.forEach { (key, value) ->
+                appendLine("$key: ${formatPercentage(value)}<br>")
+            }
         }
 
+        val infoTextView = TextView(this).apply {
+            text = Html.fromHtml(infoText, Html.FROM_HTML_MODE_COMPACT)
+            textSize = 18f
+            setPadding(0, 25, 0, 25)
+        }
         infoContainer.addView(infoTextView)
     }
+
+
 }
