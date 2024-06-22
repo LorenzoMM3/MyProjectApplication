@@ -38,7 +38,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         btnCityMap.setOnClickListener {
-            replaceFragment(MapFragment())
+            replaceFragment(MapFragment.newInstance(clientToken ?: ""))
         }
 
         btnHelp.setOnClickListener {

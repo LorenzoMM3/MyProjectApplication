@@ -62,11 +62,11 @@ class MyUploadsFragment : Fragment() {
                         displayUploads(it)
                     }
                 } else {
-                    Toast.makeText(context, "Errore: ${response.errorBody()?.string()}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "FetchMy Error: ${response.errorBody()?.string()}", Toast.LENGTH_SHORT).show()
                 }
             }
             override fun onFailure(call: Call<List<ResponseMyUploads>>, t: Throwable) {
-                Toast.makeText(context, "Errore: ${t.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "FetchMy Error: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
     }
@@ -76,6 +76,7 @@ class MyUploadsFragment : Fragment() {
         val call = apiService.seeAllUploads("Bearer $token")
 
         call.enqueue(object : Callback<List<ResponseAllUploads>> {
+            @SuppressLint("SuspiciousIndentation")
             override fun onResponse(call: Call<List<ResponseAllUploads>>, response: Response<List<ResponseAllUploads>>) {
                 if (response.isSuccessful) {
                     val uploads = response.body()
@@ -83,11 +84,11 @@ class MyUploadsFragment : Fragment() {
                             displayAllUploads(it)
                         }
                 } else {
-                    Toast.makeText(context, "Errore: ${response.errorBody()?.string()}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "FetchAll Error: ${response.errorBody()?.string()}", Toast.LENGTH_SHORT).show()
                 }
             }
             override fun onFailure(call: Call<List<ResponseAllUploads>>, t: Throwable) {
-                Toast.makeText(context, "Errore: ${t.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "FetchAll Error: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
     }
@@ -102,11 +103,11 @@ class MyUploadsFragment : Fragment() {
                     val uploads = response.body()
                     Toast.makeText(context, uploads.toString(), Toast.LENGTH_SHORT).show()
                 } else {
-                    Toast.makeText(context, "Errore: ${response.errorBody()?.string()}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Delete Error: ${response.errorBody()?.string()}", Toast.LENGTH_SHORT).show()
                 }
             }
             override fun onFailure(call: Call<ResponseDeleteFile>, t: Throwable) {
-                Toast.makeText(context, "Errore: ${t.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Delete Error: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
     }
@@ -121,11 +122,11 @@ class MyUploadsFragment : Fragment() {
                     val uploads = response.body()
                     Toast.makeText(context, "Audio Shown", Toast.LENGTH_SHORT).show()
                 } else {
-                    Toast.makeText(context, "Errore: ${response.errorBody()?.string()}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Show Error: ${response.errorBody()?.string()}", Toast.LENGTH_SHORT).show()
                 }
             }
             override fun onFailure(call: Call<ResponseShowFile>, t: Throwable) {
-                Toast.makeText(context, "Errore: ${t.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Show Errore: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
     }
@@ -140,11 +141,11 @@ class MyUploadsFragment : Fragment() {
                     val uploads = response.body()
                     Toast.makeText(context, "Audio Hidden", Toast.LENGTH_SHORT).show()
                 } else {
-                    Toast.makeText(context, "Error: ${response.errorBody()?.string()}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Hide Error: ${response.errorBody()?.string()}", Toast.LENGTH_SHORT).show()
                 }
             }
             override fun onFailure(call: Call<ResponseHideFile>, t: Throwable) {
-                Toast.makeText(context, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Hide Error: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
     }
