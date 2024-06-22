@@ -51,7 +51,7 @@ class MyUploadsFragment : Fragment() {
 
     private fun fetchMyUploads(token: String) {
         val apiService = ApiClient.instance.create(ApiService::class.java)
-        val call = apiService.SeeMyUploads("Bearer $token")
+        val call = apiService.seeMyUploads("Bearer $token")
 
         call.enqueue(object : Callback<List<ResponseMyUploads>> {
             override fun onResponse(call: Call<List<ResponseMyUploads>>, response: Response<List<ResponseMyUploads>>) {
@@ -73,7 +73,7 @@ class MyUploadsFragment : Fragment() {
 
     private fun fetchAllUploads(token: String) {
         val apiService = ApiClient.instance.create(ApiService::class.java)
-        val call = apiService.SeeAllUploads("Bearer $token")
+        val call = apiService.seeAllUploads("Bearer $token")
 
         call.enqueue(object : Callback<List<ResponseAllUploads>> {
             override fun onResponse(call: Call<List<ResponseAllUploads>>, response: Response<List<ResponseAllUploads>>) {
@@ -93,7 +93,7 @@ class MyUploadsFragment : Fragment() {
         })
     }
 
-    private fun DeleteFile(token: String, id: Int) {
+    private fun deleteFile(token: String, id: Int) {
         val apiService = ApiClient.instance.create(ApiService::class.java)
         val call = apiService.deleteFile("Bearer $token", id)
 
@@ -112,7 +112,7 @@ class MyUploadsFragment : Fragment() {
         })
     }
 
-    private fun ShowUpload(token: String,  id: Int) {
+    private fun showUpload(token: String,  id: Int) {
         val apiService = ApiClient.instance.create(ApiService::class.java)
         val call = apiService.showFile("Bearer $token", id)
 
@@ -132,7 +132,7 @@ class MyUploadsFragment : Fragment() {
         })
     }
 
-    private fun HideUpload(token: String,  id: Int) {
+    private fun hideUpload(token: String,  id: Int) {
         val apiService = ApiClient.instance.create(ApiService::class.java)
         val call = apiService.hideFile("Bearer $token", id)
 
@@ -179,24 +179,24 @@ class MyUploadsFragment : Fragment() {
                 }
             }
 
-            val HideFileButton = Button(context).apply {
+            val hideFileButton = Button(context).apply {
                 text = "Hide File"
                 setOnClickListener {
-                    token?.let { it1 -> HideUpload(it1, upload.id) }
+                    token?.let { it1 -> hideUpload(it1, upload.id) }
                 }
             }
 
-            val ShowFileButton = Button(context).apply {
+            val showFileButton = Button(context).apply {
                 text = "Show File"
                 setOnClickListener {
-                    token?.let { it1 -> ShowUpload(it1, upload.id) }
+                    token?.let { it1 -> showUpload(it1, upload.id) }
                 }
             }
 
-            val DeleteFileButton = Button(context).apply {
+            val deleteFileButton = Button(context).apply {
                 text = "Delete File"
                 setOnClickListener {
-                    token?.let { it1 -> DeleteFile(it1, upload.id) }
+                    token?.let { it1 -> deleteFile(it1, upload.id) }
                 }
             }
 
@@ -204,9 +204,9 @@ class MyUploadsFragment : Fragment() {
                 orientation = LinearLayout.VERTICAL
                 addView(textView)
                 addView(moreInfoButton)
-                addView(HideFileButton)
-                addView(ShowFileButton)
-                addView(DeleteFileButton)
+                addView(hideFileButton)
+                addView(showFileButton)
+                addView(deleteFileButton)
             }
             uploadsContainer.addView(layout)
         }

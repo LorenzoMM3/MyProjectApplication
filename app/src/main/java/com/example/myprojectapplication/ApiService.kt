@@ -221,13 +221,13 @@ interface ApiService {
     fun deleteUser(@Header("Authorization") authHeader: String): Call<DeleteResponse>
 
     @GET("audio/my")
-    fun SeeMyUploads(@Header("Authorization") authHeader: String): Call<List<ResponseMyUploads>>
+    fun seeMyUploads(@Header("Authorization") authHeader: String): Call<List<ResponseMyUploads>>
 
     @GET("audio/all")
-    fun SeeAllUploads(@Header("Authorization") authHeader: String): Call<List<ResponseAllUploads>>
+    fun seeAllUploads(@Header("Authorization") authHeader: String): Call<List<ResponseAllUploads>>
 
     @GET("audio/{id}")
-    fun SeeMoreInfo(@Header("Authorization") authHeader: String, @Path("id") id:Int): Call<ResponseMoreInfo>
+    fun seeMoreInfo(@Header("Authorization") authHeader: String, @Path("id") id:Int): Call<ResponseMoreInfo>
     @DELETE("audio/my/{id}")
     fun deleteFile(@Header("Authorization") authHeader: String, @Path("id") id:Int): Call<ResponseDeleteFile>
 

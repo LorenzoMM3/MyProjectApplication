@@ -49,7 +49,7 @@ class MoreInfoActivity : AppCompatActivity() {
         lifecycleScope.launch {
             try {
                 val response = withContext(Dispatchers.IO) {
-                    apiService.SeeMoreInfo(authHeader, uploadId).execute()
+                    apiService.seeMoreInfo(authHeader, uploadId).execute()
                 }
 
                 if (response.isSuccessful) {

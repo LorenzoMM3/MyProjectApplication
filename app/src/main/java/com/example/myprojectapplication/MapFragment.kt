@@ -2,7 +2,6 @@ package com.example.myprojectapplication
 
 import android.Manifest
 import android.content.pm.PackageManager
-import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.VectorDrawable
 import android.location.Location
 import android.os.Bundle
