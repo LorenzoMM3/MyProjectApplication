@@ -16,6 +16,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import retrofit2.Call
 import retrofit2.Callback
@@ -64,7 +65,6 @@ class MyUploadsFragment : Fragment() {
                     Toast.makeText(context, "Errore: ${response.errorBody()?.string()}", Toast.LENGTH_SHORT).show()
                 }
             }
-
             override fun onFailure(call: Call<List<ResponseMyUploads>>, t: Throwable) {
                 Toast.makeText(context, "Errore: ${t.message}", Toast.LENGTH_SHORT).show()
             }
@@ -86,7 +86,6 @@ class MyUploadsFragment : Fragment() {
                     Toast.makeText(context, "Errore: ${response.errorBody()?.string()}", Toast.LENGTH_SHORT).show()
                 }
             }
-
             override fun onFailure(call: Call<List<ResponseAllUploads>>, t: Throwable) {
                 Toast.makeText(context, "Errore: ${t.message}", Toast.LENGTH_SHORT).show()
             }
@@ -120,12 +119,11 @@ class MyUploadsFragment : Fragment() {
             override fun onResponse(call: Call<ResponseShowFile>, response: Response<ResponseShowFile>) {
                 if (response.isSuccessful) {
                     val uploads = response.body()
-                    Toast.makeText(context, uploads.toString(), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Audio Shown", Toast.LENGTH_SHORT).show()
                 } else {
                     Toast.makeText(context, "Errore: ${response.errorBody()?.string()}", Toast.LENGTH_SHORT).show()
                 }
             }
-
             override fun onFailure(call: Call<ResponseShowFile>, t: Throwable) {
                 Toast.makeText(context, "Errore: ${t.message}", Toast.LENGTH_SHORT).show()
             }
@@ -140,13 +138,13 @@ class MyUploadsFragment : Fragment() {
             override fun onResponse(call: Call<ResponseHideFile>, response: Response<ResponseHideFile>) {
                 if (response.isSuccessful) {
                     val uploads = response.body()
-                    Toast.makeText(context, uploads.toString(), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Audio Hidden", Toast.LENGTH_SHORT).show()
                 } else {
-                    Toast.makeText(context, "Errore: ${response.errorBody()?.string()}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Error: ${response.errorBody()?.string()}", Toast.LENGTH_SHORT).show()
                 }
             }
             override fun onFailure(call: Call<ResponseHideFile>, t: Throwable) {
-                Toast.makeText(context, "Errore: ${t.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
     }
@@ -162,6 +160,7 @@ class MyUploadsFragment : Fragment() {
                     Latitude: ${upload.latitude}
                     Hidden: ${upload.hidden}
                     Uploaded: ${upload.uploaded}
+                    Possible Actions: 
                 """.trimIndent()
                 setTextColor(resources.getColor(R.color.black, null))
                 textSize = 16f
@@ -182,21 +181,21 @@ class MyUploadsFragment : Fragment() {
             val hideFileButton = Button(context).apply {
                 text = "Hide File"
                 setOnClickListener {
-                    token?.let { it1 -> hideUpload(it1, upload.id) }
+                    token?.let { it1 -> showHideConfirmationDialog(it1, upload.id) }
                 }
             }
 
             val showFileButton = Button(context).apply {
                 text = "Show File"
                 setOnClickListener {
-                    token?.let { it1 -> showUpload(it1, upload.id) }
+                    token?.let { it1 -> showShowConfirmationDialog(it1, upload.id) }
                 }
             }
 
             val deleteFileButton = Button(context).apply {
                 text = "Delete File"
                 setOnClickListener {
-                    token?.let { it1 -> deleteFile(it1, upload.id) }
+                    token?.let { it1 -> showDeleteConfirmationDialog(it1, upload.id) }
                 }
             }
 
@@ -212,6 +211,45 @@ class MyUploadsFragment : Fragment() {
         }
     }
 
+    private fun showDeleteConfirmationDialog(token: String, id: Int) {
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setMessage("Are you sure you want to delete this file?")
+            .setPositiveButton("Yes") { dialog, _ ->
+                deleteFile(token, id)
+            }
+            .setNegativeButton("No") { dialog, _ ->
+                dialog.dismiss()
+            }
+        val alert = builder.create()
+        alert.show()
+    }
+
+    private fun showHideConfirmationDialog(token: String, id: Int) {
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setMessage("Are you sure you want to hide this file?")
+            .setPositiveButton("Yes") { dialog, _ ->
+                hideUpload(token, id)
+            }
+            .setNegativeButton("No") { dialog, _ ->
+                dialog.dismiss()
+            }
+        val alert = builder.create()
+        alert.show()
+    }
+
+    private fun showShowConfirmationDialog(token: String, id: Int) {
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setMessage("Are you sure you want to show this file?")
+            .setPositiveButton("Yes") { dialog, _ ->
+                showUpload(token, id)
+            }
+            .setNegativeButton("No") { dialog, _ ->
+                dialog.dismiss()
+            }
+        val alert = builder.create()
+        alert.show()
+    }
+
     @SuppressLint("SetTextI18n")
     private fun displayAllUploads(uploads: List<ResponseAllUploads>) {
         uploadsContainer2.removeAllViews()
@@ -221,6 +259,7 @@ class MyUploadsFragment : Fragment() {
                 ID: ${upload.id}
                 Longitude: ${upload.longitude}
                 Latitude: ${upload.latitude}
+                Possible Actions:
             """.trimIndent()
                 setTextColor(resources.getColor(R.color.black, null))
                 textSize = 16f
@@ -247,7 +286,6 @@ class MyUploadsFragment : Fragment() {
             uploadsContainer2.addView(layout)
         }
     }
-
 
     companion object {
         @JvmStatic

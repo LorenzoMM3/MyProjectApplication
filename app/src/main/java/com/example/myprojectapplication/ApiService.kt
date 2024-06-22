@@ -228,6 +228,7 @@ interface ApiService {
 
     @GET("audio/{id}")
     fun seeMoreInfo(@Header("Authorization") authHeader: String, @Path("id") id:Int): Call<ResponseMoreInfo>
+
     @DELETE("audio/my/{id}")
     fun deleteFile(@Header("Authorization") authHeader: String, @Path("id") id:Int): Call<ResponseDeleteFile>
 
