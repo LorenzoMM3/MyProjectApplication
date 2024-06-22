@@ -15,7 +15,7 @@ data class DeleteResponse(val detail: String)
 data class ResponseMyUploads(val id: Int, val longitude: Float, val latitude: Float,  val hidden: Boolean, val uploaded: Boolean)
 data class ResponseAllUploads(val id: Int, val longitude: Float, val latitude: Float)
 data class ResponseMoreInfo(val longitude: Float, val latitude: Float, val id: Int, val creator_id: Int, val creator_username: String, val tags: Tags)
-data class Tags(val bpm: Int, val danceability: Float, val loudness: Float, val mood: Mood, val genre: Genre, val instrument: Instrument)
+data class Tags(val bpm: Int, val danceability: Float, val loudness: Float, val mood: Map<String, Double>,val genre: Map<String, Double>, val instrument: Map<String, Double>)
 data class Mood(
     val action: Float,
     val adventure: Float,
