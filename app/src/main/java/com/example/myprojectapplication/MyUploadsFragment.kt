@@ -18,6 +18,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
+import com.example.myprojectapplication.utilLogin.forceLogin
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -100,10 +101,18 @@ class MyUploadsFragment : Fragment() {
         call.enqueue(object : Callback<ResponseDeleteFile> {
             override fun onResponse(call: Call<ResponseDeleteFile>, response: Response<ResponseDeleteFile>) {
                 if (response.isSuccessful) {
-                    val uploads = response.body()
-                    Toast.makeText(context, uploads.toString(), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Song deleted successfully!", Toast.LENGTH_SHORT).show()
                 } else {
-                    Toast.makeText(context, "Delete Error: ${response.errorBody()?.string()}", Toast.LENGTH_SHORT).show()
+                    val errorMessage: String = when (response.code()) {
+                        401 -> {
+                            context?.let { forceLogin(it) }
+                            "User is not authenticated"
+                        }
+                        404 -> "Audio not found"
+                        400 -> "You are not authorized to delete this audio"
+                        else -> "Delete Error: ${response.errorBody()?.string()}"
+                    }
+                    Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
                 }
             }
             override fun onFailure(call: Call<ResponseDeleteFile>, t: Throwable) {
@@ -119,14 +128,22 @@ class MyUploadsFragment : Fragment() {
         call.enqueue(object : Callback<ResponseShowFile> {
             override fun onResponse(call: Call<ResponseShowFile>, response: Response<ResponseShowFile>) {
                 if (response.isSuccessful) {
-                    val uploads = response.body()
                     Toast.makeText(context, "Audio Shown", Toast.LENGTH_SHORT).show()
                 } else {
-                    Toast.makeText(context, "Show Error: ${response.errorBody()?.string()}", Toast.LENGTH_SHORT).show()
+                    val errorMessage: String = when (response.code()) {
+                        401 -> {
+                            context?.let { forceLogin(it) }
+                            "User is not authenticated"
+                        }
+                        404 -> "Audio not found"
+                        400 -> "You are not authorized to do this audio"
+                        else -> "Delete Error: ${response.errorBody()?.string()}"
+                    }
+                    Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
                 }
             }
             override fun onFailure(call: Call<ResponseShowFile>, t: Throwable) {
-                Toast.makeText(context, "Show Errore: ${t.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Show Error: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
     }
@@ -138,10 +155,18 @@ class MyUploadsFragment : Fragment() {
         call.enqueue(object : Callback<ResponseHideFile> {
             override fun onResponse(call: Call<ResponseHideFile>, response: Response<ResponseHideFile>) {
                 if (response.isSuccessful) {
-                    val uploads = response.body()
                     Toast.makeText(context, "Audio Hidden", Toast.LENGTH_SHORT).show()
                 } else {
-                    Toast.makeText(context, "Hide Error: ${response.errorBody()?.string()}", Toast.LENGTH_SHORT).show()
+                    val errorMessage: String = when (response.code()) {
+                        401 -> {
+                            context?.let { forceLogin(it) }
+                            "User is not authenticated"
+                        }
+                        404 -> "Audio not found"
+                        400 -> "You are not authorized to do this audio"
+                        else -> "Delete Error: ${response.errorBody()?.string()}"
+                    }
+                    Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
                 }
             }
             override fun onFailure(call: Call<ResponseHideFile>, t: Throwable) {
