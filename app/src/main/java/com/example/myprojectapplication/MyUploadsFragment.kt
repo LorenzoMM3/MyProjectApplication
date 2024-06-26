@@ -60,10 +60,17 @@ class MyUploadsFragment : Fragment() {
                 if (response.isSuccessful) {
                     val uploads = response.body()
                     uploads?.let {
-                        displayUploads(it)
+                        displayMyUploads(it)
                     }
                 } else {
-                    Toast.makeText(context, "FetchMy Error: ${response.errorBody()?.string()}", Toast.LENGTH_SHORT).show()
+                    val errorMessage: String = when (response.code()) {
+                        401 -> {
+                            context?.let { forceLogin(it) }
+                            "User is not authenticated"
+                        }
+                        else -> "Fetch My Error: ${response.errorBody()?.string()}"
+                    }
+                    Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
                 }
             }
             override fun onFailure(call: Call<List<ResponseMyUploads>>, t: Throwable) {
@@ -85,7 +92,14 @@ class MyUploadsFragment : Fragment() {
                             displayAllUploads(it)
                         }
                 } else {
-                    Toast.makeText(context, "FetchAll Error: ${response.errorBody()?.string()}", Toast.LENGTH_SHORT).show()
+                    val errorMessage: String = when (response.code()) {
+                        401 -> {
+                            context?.let { forceLogin(it) }
+                            "User is not authenticated"
+                        }
+                        else -> "Fetch All Error: ${response.errorBody()?.string()}"
+                    }
+                    Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
                 }
             }
             override fun onFailure(call: Call<List<ResponseAllUploads>>, t: Throwable) {
@@ -176,7 +190,7 @@ class MyUploadsFragment : Fragment() {
     }
 
     @SuppressLint("SetTextI18n")
-    private fun displayUploads(uploads: List<ResponseMyUploads>) {
+    private fun displayMyUploads(uploads: List<ResponseMyUploads>) {
         uploadsContainer.removeAllViews()
         uploads.forEach { upload ->
             val textView = TextView(context).apply {
@@ -206,6 +220,7 @@ class MyUploadsFragment : Fragment() {
 
             val hideFileButton = Button(context).apply {
                 text = "Hide File"
+                visibility = if (upload.hidden == false) View.VISIBLE else View.GONE
                 setOnClickListener {
                     token?.let { it1 -> showHideConfirmationDialog(it1, upload.id) }
                 }
@@ -213,6 +228,7 @@ class MyUploadsFragment : Fragment() {
 
             val showFileButton = Button(context).apply {
                 text = "Show File"
+                visibility = if (upload.hidden == true) View.VISIBLE else View.GONE
                 setOnClickListener {
                     token?.let { it1 -> showShowConfirmationDialog(it1, upload.id) }
                 }
@@ -242,6 +258,10 @@ class MyUploadsFragment : Fragment() {
         builder.setMessage("Are you sure you want to delete this file?")
             .setPositiveButton("Yes") { dialog, _ ->
                 deleteFile(token, id)
+                token?.let {
+                    fetchMyUploads(it)
+                    fetchAllUploads(it)
+                }
             }
             .setNegativeButton("No") { dialog, _ ->
                 dialog.dismiss()
@@ -255,6 +275,10 @@ class MyUploadsFragment : Fragment() {
         builder.setMessage("Are you sure you want to hide this file?")
             .setPositiveButton("Yes") { dialog, _ ->
                 hideUpload(token, id)
+                token?.let {
+                    fetchMyUploads(it)
+                    fetchAllUploads(it)
+                }
             }
             .setNegativeButton("No") { dialog, _ ->
                 dialog.dismiss()
@@ -268,6 +292,10 @@ class MyUploadsFragment : Fragment() {
         builder.setMessage("Are you sure you want to show this file?")
             .setPositiveButton("Yes") { dialog, _ ->
                 showUpload(token, id)
+                token?.let {
+                    fetchMyUploads(it)
+                    fetchAllUploads(it)
+                }
             }
             .setNegativeButton("No") { dialog, _ ->
                 dialog.dismiss()

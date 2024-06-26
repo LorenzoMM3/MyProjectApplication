@@ -2,6 +2,7 @@ package com.example.myprojectapplication
 
 import ApiService
 import DeleteResponse
+import ResponseMyUploads
 import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -26,7 +27,6 @@ class MyAccountActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_my_account)
 
-
         val btnGoBack: Button = findViewById(R.id.btnBack1ma)
         val btnDeleteAccount: Button = findViewById(R.id.btnDeleteAccount)
         val textViewUser: TextView = findViewById(R.id.textView2ma)
@@ -41,7 +41,11 @@ class MyAccountActivity : AppCompatActivity() {
 
         textViewUser.text = "Username: $username"
         textViewPsw.text = "Password: $password"
-        textViewTotUploads.text = "Total Uploads: 0"
+        findTotalUploads(clientToken.toString(), object : UploadCountCallback {
+            override fun onUploadCountReceived(count: Int) {
+                textViewTotUploads.text = "Total Uploads: $count"
+            }
+        })
         textViewClientId.text = "Client ID: $clientId"
         textViewToken.text = "Client Token: $clientToken"
 
@@ -57,6 +61,37 @@ class MyAccountActivity : AppCompatActivity() {
         btnDeleteAccount.setOnClickListener {
             showDeleteConfirmationDialog()
         }
+    }
+
+    private fun findTotalUploads(clientToken: String, callback: UploadCountCallback) {
+        val apiService = ApiClient.instance.create(ApiService::class.java)
+        val call = apiService.seeMyUploads("Bearer $clientToken")
+
+        call.enqueue(object : Callback<List<ResponseMyUploads>> {
+            override fun onResponse(call: Call<List<ResponseMyUploads>>, response: Response<List<ResponseMyUploads>>) {
+                if (response.isSuccessful) {
+                    val uploads = response.body()
+                    val totalUploads = uploads?.size ?: 0
+                    callback.onUploadCountReceived(totalUploads)
+                } else {
+                    val errorMessage: String = when (response.code()) {
+                        401 -> {
+                            utilLogin.forceLogin(this@MyAccountActivity)
+                            "User is not authenticated"
+                        }
+                        else -> "Fetch My Error: ${response.errorBody()?.string()}"
+                    }
+                    Toast.makeText(this@MyAccountActivity, errorMessage, Toast.LENGTH_SHORT).show()
+                }
+            }
+            override fun onFailure(call: Call<List<ResponseMyUploads>>, t: Throwable) {
+                Toast.makeText(this@MyAccountActivity, "FetchMy Error: ${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+    interface UploadCountCallback {
+        fun onUploadCountReceived(count: Int)
     }
 
     private fun showDeleteConfirmationDialog() {
