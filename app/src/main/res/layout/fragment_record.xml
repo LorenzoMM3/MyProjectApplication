@@ -31,8 +31,34 @@
                 android:layout_width="220dp"
                 android:layout_height="220dp"
                 android:backgroundTint="@color/green"
-                android:text="Start Listenin'"
+                android:text="Start Listening"
                 android:textColor="@color/white"
+                android:textSize="20dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <LinearLayout
+            android:id="@+id/uploadsContainer2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="5dp"
+            android:orientation="vertical" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="166dp">
+
+            <Button
+                android:id="@+id/btnStop"
+                android:layout_width="220dp"
+                android:layout_height="120dp"
+                android:backgroundTint="@color/green"
+                android:text="Delete Audio"
+                android:textColor="@color/white"
+                android:textSize="20dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
