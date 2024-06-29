@@ -59,7 +59,7 @@
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:fontFamily="@font/average"
-            android:text="Files Uploaded: "
+            android:text="Total Uploads: "
             android:textAlignment="center"
             android:textColor="@color/black"
             android:textSize="20sp"

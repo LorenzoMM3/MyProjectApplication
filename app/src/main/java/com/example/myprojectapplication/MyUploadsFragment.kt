@@ -258,10 +258,6 @@ class MyUploadsFragment : Fragment() {
         builder.setMessage("Are you sure you want to delete this file?")
             .setPositiveButton("Yes") { dialog, _ ->
                 deleteFile(token, id)
-                token?.let {
-                    fetchMyUploads(it)
-                    fetchAllUploads(it)
-                }
             }
             .setNegativeButton("No") { dialog, _ ->
                 dialog.dismiss()
@@ -275,10 +271,6 @@ class MyUploadsFragment : Fragment() {
         builder.setMessage("Are you sure you want to hide this file?")
             .setPositiveButton("Yes") { dialog, _ ->
                 hideUpload(token, id)
-                token?.let {
-                    fetchMyUploads(it)
-                    fetchAllUploads(it)
-                }
             }
             .setNegativeButton("No") { dialog, _ ->
                 dialog.dismiss()
@@ -292,10 +284,6 @@ class MyUploadsFragment : Fragment() {
         builder.setMessage("Are you sure you want to show this file?")
             .setPositiveButton("Yes") { dialog, _ ->
                 showUpload(token, id)
-                token?.let {
-                    fetchMyUploads(it)
-                    fetchAllUploads(it)
-                }
             }
             .setNegativeButton("No") { dialog, _ ->
                 dialog.dismiss()
