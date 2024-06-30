@@ -1,5 +1,6 @@
 package com.example.myprojectapplication
 
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.widget.Button
 import android.widget.Toast
@@ -10,6 +11,8 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.File
+import java.io.IOException
 
 class MoreInfoActivity : AppCompatActivity() {
 
@@ -17,6 +20,8 @@ class MoreInfoActivity : AppCompatActivity() {
     private lateinit var adapter: MoreInfoAdapter
     private var uploadId: Int = -1
     private var token: String? = null
+    private var audioFilePath: String? = null
+    private var mediaPlayer: MediaPlayer? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,9 +31,11 @@ class MoreInfoActivity : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
 
         val btnBack1mi: Button = findViewById(R.id.btnBack1mi)
+        val btnPlayAudio: Button = findViewById(R.id.btnPlayAudio)
 
         uploadId = intent.getIntExtra("uploadId", -1)
         token = intent.getStringExtra("token")
+        audioFilePath = intent.getStringExtra("audioFilePath")
 
         if (uploadId != -1 && token != null) {
             fetchMoreInfo(uploadId, token!!)
@@ -38,6 +45,10 @@ class MoreInfoActivity : AppCompatActivity() {
 
         btnBack1mi.setOnClickListener {
             onBackPressed()
+        }
+
+        btnPlayAudio.setOnClickListener {
+            playAudio()
         }
     }
 
@@ -98,5 +109,34 @@ class MoreInfoActivity : AppCompatActivity() {
 
         adapter = MoreInfoAdapter(infoList)
         recyclerView.adapter = adapter
+    }
+
+    private fun playAudio() {
+        val filePath = audioFilePath
+        if (filePath != null) {
+            val file = File(filePath)
+            if (file.exists()) {
+                mediaPlayer = MediaPlayer().apply {
+                    try {
+                        setDataSource(filePath)
+                        prepare()
+                        start()
+                        Toast.makeText(this@MoreInfoActivity, "Playing Audio", Toast.LENGTH_SHORT).show()
+                    } catch (e: IOException) {
+                        Toast.makeText(this@MoreInfoActivity, "Error playing audio: ${e.message}", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            } else {
+                Toast.makeText(this, "Audio file not found", Toast.LENGTH_SHORT).show()
+            }
+        } else {
+            Toast.makeText(this, "Audio file path is not set", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mediaPlayer?.release()
+        mediaPlayer = null
     }
 }

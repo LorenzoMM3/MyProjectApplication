@@ -207,6 +207,7 @@ class MyUploadsFragment : Fragment() {
                     val intent = Intent(context, MoreInfoActivity::class.java).apply {
                         putExtra("uploadId", upload.id)
                         putExtra("token", token)
+                        putExtra("audioFilePath", "${requireActivity().externalCacheDir?.absolutePath}/audiorecordtest.mp3")
                     }
                     context.startActivity(intent)
                 }

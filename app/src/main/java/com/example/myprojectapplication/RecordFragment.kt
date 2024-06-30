@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.graphics.Typeface
 import android.location.Location
+import android.media.MediaPlayer
 import android.media.MediaRecorder
 import android.os.Bundle
 import android.util.Log
@@ -16,7 +17,6 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -37,12 +37,16 @@ class RecordFragment : Fragment() {
     private var isRecording = false
     private lateinit var btnListener: Button
     private lateinit var btnDeleteAudio: Button
+    private lateinit var btnPlayAudio: Button
+    private lateinit var btnPauseAudio: Button
+    private lateinit var btnStopAudio: Button
     private lateinit var uploadsContainer2: LinearLayout
     private var recordingFilePath: String = ""
     private var latitude: Double? = null
     private var longitude: Double? = null
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var recorder: MediaRecorder? = null
+    private var mediaPlayer: MediaPlayer? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,6 +64,9 @@ class RecordFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_record, container, false)
         btnListener = view.findViewById(R.id.btnListener)
         btnDeleteAudio = view.findViewById(R.id.btnDeleteAudio)
+        btnPlayAudio = view.findViewById(R.id.btnPlayAudio)
+        btnPauseAudio = view.findViewById(R.id.btnPauseAudio)
+        btnStopAudio = view.findViewById(R.id.btnStopAudio)
         uploadsContainer2 = view.findViewById(R.id.uploadsContainer2)
 
         btnListener.setOnClickListener {
@@ -76,6 +83,18 @@ class RecordFragment : Fragment() {
             } else {
                 addResponseToContainer("No recording to delete")
             }
+        }
+
+        btnPlayAudio.setOnClickListener {
+            playRecording()
+        }
+
+        btnPauseAudio.setOnClickListener {
+            pauseRecording()
+        }
+
+        btnStopAudio.setOnClickListener {
+            stopPlayingRecording()
         }
 
         return view
@@ -133,6 +152,57 @@ class RecordFragment : Fragment() {
         } else {
             addResponseToContainer("No recording to delete")
         }
+    }
+
+    private fun playRecording() {
+        val file = File(recordingFilePath)
+        if (file.exists()) {
+            if (mediaPlayer == null) {
+                mediaPlayer = MediaPlayer().apply {
+                    setDataSource(recordingFilePath)
+                    prepareAsync()
+                    setOnPreparedListener {
+                        start()
+                        addResponseToContainer("Playing Audio")
+                    }
+                }
+            } else {
+                mediaPlayer?.start()
+                addResponseToContainer("Resuming Audio")
+            }
+        } else {
+            addResponseToContainer("No recording to play")
+        }
+    }
+
+    private fun pauseRecording() {
+        mediaPlayer?.let {
+            if (it.isPlaying) {
+                it.pause()
+                addResponseToContainer("Audio paused")
+            } else {
+                addResponseToContainer("No audio is currently playing")
+            }
+        }
+    }
+
+    private fun stopPlayingRecording() {
+        mediaPlayer?.let {
+            if (it.isPlaying) {
+                it.stop()
+                it.release()
+                mediaPlayer = null
+                addResponseToContainer("Audio stopped")
+            } else {
+                addResponseToContainer("No audio is currently playing")
+            }
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mediaPlayer?.release()
+        mediaPlayer = null
     }
 
     private fun getLastKnownLocationAndUpload() {
