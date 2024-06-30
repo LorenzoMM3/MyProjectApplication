@@ -1,7 +1,5 @@
 package com.example.myprojectapplication
 
-import ApiService
-import TokenResponse
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -15,9 +13,6 @@ import retrofit2.Response
 
 class LogActivity : AppCompatActivity() {
 
-    private val apiService: ApiService by lazy {
-        ApiClient.instance.create(ApiService::class.java)
-    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_log)
@@ -40,6 +35,7 @@ class LogActivity : AppCompatActivity() {
             intent.putExtra("username", stringUser)
             intent.putExtra("password", stringPsw)
 
+            val apiService = ApiClient.instance.create(ApiService::class.java)
             apiService.getToken(stringUser, stringPsw).enqueue(object : Callback<TokenResponse> {
                 override fun onResponse(call: Call<TokenResponse>, response: Response<TokenResponse>) {
                     if (response.isSuccessful) {

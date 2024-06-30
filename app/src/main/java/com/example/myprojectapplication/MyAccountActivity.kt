@@ -1,8 +1,5 @@
 package com.example.myprojectapplication
 
-import ApiService
-import DeleteResponse
-import ResponseMyUploads
 import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity

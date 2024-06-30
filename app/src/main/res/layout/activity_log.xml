@@ -119,7 +119,7 @@
         android:id="@+id/textViewNoAccount"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="You haven't got an Account?"
+        android:text="You don't have an Account?"
         android:textAlignment="center"
         android:textColor="@color/white"
         android:textSize="16sp"

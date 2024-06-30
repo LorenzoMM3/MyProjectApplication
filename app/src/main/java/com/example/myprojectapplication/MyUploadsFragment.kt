@@ -1,12 +1,6 @@
 package com.example.myprojectapplication
 
-import ApiService
-import ResponseAllUploads
 import android.widget.Toast
-import ResponseDeleteFile
-import ResponseHideFile
-import ResponseMyUploads
-import ResponseShowFile
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle

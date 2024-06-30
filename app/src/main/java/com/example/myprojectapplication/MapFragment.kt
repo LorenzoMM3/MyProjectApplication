@@ -1,7 +1,5 @@
 package com.example.myprojectapplication
 
-import ApiService
-import ResponseAllUploads
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -53,7 +51,7 @@ class MapFragment : Fragment() {
         return view
     }
 
-    private fun checkLocationPermission() {
+    fun checkLocationPermission() {
         if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION), 1)
         } else {

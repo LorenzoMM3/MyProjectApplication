@@ -1,8 +1,5 @@
 package com.example.myprojectapplication
 
-import ApiService
-import SignUpRequest
-import SignUpResponse
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -14,10 +11,6 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class RegActivity : AppCompatActivity() {
-
-    private val apiService: ApiService by lazy {
-        ApiClient.instance.create(ApiService::class.java)
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,6 +32,7 @@ class RegActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
+            val apiService = ApiClient.instance.create(ApiService::class.java)
             val request = SignUpRequest(username = stringUser, password = stringPsw)
             apiService.signUp(request).enqueue(object : Callback<SignUpResponse> {
                 override fun onResponse(call: Call<SignUpResponse>, response: Response<SignUpResponse>) {

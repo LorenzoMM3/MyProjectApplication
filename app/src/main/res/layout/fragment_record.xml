@@ -52,7 +52,7 @@
             android:layout_height="166dp">
 
             <Button
-                android:id="@+id/btnStop"
+                android:id="@+id/btnDeleteAudio"
                 android:layout_width="220dp"
                 android:layout_height="120dp"
                 android:backgroundTint="@color/green"
