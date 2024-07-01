@@ -32,10 +32,11 @@ class MoreInfoActivity : AppCompatActivity() {
 
         val btnBack1mi: Button = findViewById(R.id.btnBack1mi)
         val btnPlayAudio: Button = findViewById(R.id.btnPlayAudio)
+        val btnPauseAudio: Button = findViewById(R.id.btnPauseAudio)
+        val btnStopAudio: Button = findViewById(R.id.btnStopAudio)
 
         uploadId = intent.getIntExtra("uploadId", -1)
         token = intent.getStringExtra("token")
-        audioFilePath = intent.getStringExtra("audioFilePath")
 
         if (uploadId != -1 && token != null) {
             fetchMoreInfo(uploadId, token!!)
@@ -48,7 +49,15 @@ class MoreInfoActivity : AppCompatActivity() {
         }
 
         btnPlayAudio.setOnClickListener {
-            playAudio()
+            playRecording()
+        }
+
+        btnPauseAudio.setOnClickListener {
+            pauseRecording()
+        }
+
+        btnStopAudio.setOnClickListener {
+            stopPlayingRecording()
         }
     }
 
@@ -66,6 +75,7 @@ class MoreInfoActivity : AppCompatActivity() {
                     response.body()?.let { moreInfo ->
                         displayMoreInfo(moreInfo)
                     }
+                    Toast.makeText(this@MoreInfoActivity, "$audioFilePath", Toast.LENGTH_LONG).show()
                 } else {
                     val errorBody = response.errorBody()?.string()
                     Toast.makeText(this@MoreInfoActivity, "Failed to fetch info: ${response.code()} - $errorBody", Toast.LENGTH_SHORT).show()
@@ -105,32 +115,57 @@ class MoreInfoActivity : AppCompatActivity() {
             info.tags.instrument.entries.sortedByDescending { it.value }.take(5).forEach { (key, value) ->
                 add("$key: ${formatPercentage(value)}")
             }
+
+            audioFilePath = "${filesDir.absolutePath}/${info.creator_username}_${info.latitude}_${info.longitude}.mp3"
+            add("Audio File Path: $audioFilePath")
         }
 
         adapter = MoreInfoAdapter(infoList)
         recyclerView.adapter = adapter
     }
 
-    private fun playAudio() {
-        val filePath = audioFilePath
-        if (filePath != null) {
-            val file = File(filePath)
-            if (file.exists()) {
+    private fun playRecording() {
+        val file = File(audioFilePath!!)
+        if (file.exists()) {
+            if (mediaPlayer == null) {
                 mediaPlayer = MediaPlayer().apply {
-                    try {
-                        setDataSource(filePath)
-                        prepare()
+                    setDataSource(audioFilePath)
+                    prepareAsync()
+                    setOnPreparedListener {
                         start()
                         Toast.makeText(this@MoreInfoActivity, "Playing Audio", Toast.LENGTH_SHORT).show()
-                    } catch (e: IOException) {
-                        Toast.makeText(this@MoreInfoActivity, "Error playing audio: ${e.message}", Toast.LENGTH_SHORT).show()
                     }
                 }
             } else {
-                Toast.makeText(this, "Audio file not found", Toast.LENGTH_SHORT).show()
+                mediaPlayer?.start()
+                Toast.makeText(this@MoreInfoActivity, "Resuming Audio", Toast.LENGTH_SHORT).show()
             }
         } else {
-            Toast.makeText(this, "Audio file path is not set", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this@MoreInfoActivity, "No Recording to Play", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun pauseRecording() {
+        mediaPlayer?.let {
+            if (it.isPlaying) {
+                it.pause()
+                Toast.makeText(this@MoreInfoActivity, "Audio Paused", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(this@MoreInfoActivity, "No Audio currently Playing", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun stopPlayingRecording() {
+        mediaPlayer?.let {
+            if (it.isPlaying) {
+                it.stop()
+                it.release()
+                mediaPlayer = null
+                Toast.makeText(this@MoreInfoActivity, "Audio Stopped", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(this@MoreInfoActivity, "No Audio is currrently Playing", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 

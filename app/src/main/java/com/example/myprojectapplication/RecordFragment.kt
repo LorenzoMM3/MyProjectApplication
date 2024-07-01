@@ -28,12 +28,15 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.io.File
 import java.io.IOException
+import kotlin.math.pow
 
 private const val ARG_TOKEN = "token"
+private const val ARG_USERNAME = "username"
 private const val REQUEST_RECORD_AUDIO_PERMISSION = 200
 
 class RecordFragment : Fragment() {
     private var token: String? = null
+    private var username: String? = null
     private var isRecording = false
     private lateinit var btnListener: Button
     private lateinit var btnDeleteAudio: Button
@@ -52,8 +55,8 @@ class RecordFragment : Fragment() {
         super.onCreate(savedInstanceState)
         arguments?.let {
             token = it.getString(ARG_TOKEN)
+            username = it.getString(ARG_USERNAME)
         }
-        recordingFilePath = "${requireActivity().externalCacheDir?.absolutePath}/audiorecordtest.mp3"
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
     }
 
@@ -68,10 +71,11 @@ class RecordFragment : Fragment() {
         btnPauseAudio = view.findViewById(R.id.btnPauseAudio)
         btnStopAudio = view.findViewById(R.id.btnStopAudio)
         uploadsContainer2 = view.findViewById(R.id.uploadsContainer2)
+        getLastKnownLocation()
 
         btnListener.setOnClickListener {
             if (isRecording) {
-                stopRecording()
+                latitude?.let { it1 -> longitude?.let { it2 -> stopRecording(it1, it2) } }
             } else {
                 startRecording()
             }
@@ -106,7 +110,13 @@ class RecordFragment : Fragment() {
             return
         }
 
-        addResponseToContainer("I am Listening... Click again to stop the recording")
+        addResponseToContainer("I am Listening... - latitude: $latitude - longitude: $longitude - username: $username - ")
+
+        if (latitude != null && longitude != null && username != null) {
+            recordingFilePath = "${requireActivity().filesDir.absolutePath}/${username}_${latitude}_${longitude}.mp3"
+        } else {
+            recordingFilePath = "${requireActivity().filesDir.absolutePath}/audioLastTest.mp3"
+        }
 
         recorder = MediaRecorder().apply {
             setAudioSource(MediaRecorder.AudioSource.MIC)
@@ -125,7 +135,7 @@ class RecordFragment : Fragment() {
         }
     }
 
-    private fun stopRecording() {
+    private fun stopRecording(latitude: Double, longitude: Double) {
         recorder?.apply {
             stop()
             release()
@@ -133,7 +143,7 @@ class RecordFragment : Fragment() {
         recorder = null
         btnListener.text = "Start Listening"
         isRecording = false
-        getLastKnownLocationAndUpload()
+        uploadFile(token!!, latitude, longitude)
     }
 
     private fun deleteRecording() {
@@ -205,13 +215,13 @@ class RecordFragment : Fragment() {
         mediaPlayer = null
     }
 
-    private fun getLastKnownLocationAndUpload() {
+    private fun getLastKnownLocation() {
         if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
                 location?.let {
                     latitude = it.latitude
                     longitude = it.longitude
-                    token?.let { uploadFile(it) }
+
                 } ?: addResponseToContainer("Location is not available.")
             }
         } else {
@@ -219,18 +229,17 @@ class RecordFragment : Fragment() {
         }
     }
 
-    private fun uploadFile(token: String) {
+    private fun uploadFile(token: String, latitude: Double, longitude: Double) {
         val file = File(recordingFilePath)
         val requestFile = RequestBody.create(MediaType.parse("audio/mpeg"), file)
         val body = MultipartBody.Part.createFormData("file", file.name, requestFile)
 
         val apiService = ApiClient.instance.create(ApiService::class.java)
-        if (latitude != null && longitude != null) {
-            val call = apiService.uploadFile("Bearer $token", longitude!!, latitude!!, body)
+            val call = apiService.uploadFile("Bearer $token", longitude, latitude, body)
             call.enqueue(object : Callback<ResponseUpload> {
                 override fun onResponse(call: Call<ResponseUpload>, response: Response<ResponseUpload>) {
                     val responseText = when (response.code()) {
-                        200 -> "File correctly uploaded."
+                        200 -> "File correctly uploaded. in $recordingFilePath"
                         401 -> {
                             context?.let { utilLogin.forceLogin(it) }
                             "User is not authenticated."
@@ -246,9 +255,6 @@ class RecordFragment : Fragment() {
                     addResponseToContainer("Upload failed: ${t.message}")
                 }
             })
-        } else {
-            addResponseToContainer("Location is not available.")
-        }
     }
 
     private fun addResponseToContainer(message: String) {
@@ -275,22 +281,16 @@ class RecordFragment : Fragment() {
                     Toast.makeText(context, "Permission to record audio denied", Toast.LENGTH_SHORT).show()
                 }
             }
-            1 -> {
-                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    getLastKnownLocationAndUpload()
-                } else {
-                    Toast.makeText(context, "Permission to access location denied", Toast.LENGTH_SHORT).show()
-                }
-            }
         }
     }
 
     companion object {
         @JvmStatic
-        fun newInstance(token: String) =
+        fun newInstance(token: String, username: String) =
             RecordFragment().apply {
                 arguments = Bundle().apply {
                     putString(ARG_TOKEN, token)
+                    putString(ARG_USERNAME, username)
                 }
             }
     }

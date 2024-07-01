@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity() {
         welcomeMsg.text = welcomeMsgString + username
 
         btnRecord.setOnClickListener {
-            replaceFragment(RecordFragment.newInstance(clientToken ?: ""))
+            replaceFragment(RecordFragment.newInstance(clientToken ?: "", username ?: ""))
         }
 
         btnMyUploads.setOnClickListener {

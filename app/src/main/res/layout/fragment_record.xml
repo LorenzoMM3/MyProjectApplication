@@ -80,7 +80,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="15dp"
-                android:text="Here's Your Last Audio:"
+                android:text="After a succesful upload, you can listen to your last uploaded audio:"
                 android:textAlignment="center"
                 android:textColor="@color/black"
                 android:textSize="16sp"
@@ -94,6 +94,7 @@
                 android:backgroundTint="@color/green"
                 android:padding="10dp"
                 android:text="Play"
+                android:textColor="@color/white"
                 android:textSize="18sp" />
 
             <Button
@@ -104,6 +105,7 @@
                 android:backgroundTint="@color/green"
                 android:padding="10dp"
                 android:text="Pause"
+                android:textColor="@color/white"
                 android:textSize="18sp" />
 
             <Button
@@ -114,6 +116,7 @@
                 android:backgroundTint="@color/green"
                 android:padding="10dp"
                 android:text="Stop"
+                android:textColor="@color/white"
                 android:textSize="18sp" />
         </LinearLayout>
 
