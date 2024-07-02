@@ -12,23 +12,34 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
+import com.example.myprojectapplication.database.UploadData
+import com.example.myprojectapplication.database.UploadDataApp
 import com.example.myprojectapplication.utilLogin.forceLogin
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 private const val ARG_TOKEN = "token"
+private const val ARG_USERNAME = "username"
 
 class MyUploadsFragment : Fragment() {
     private var token: String? = null
+    private var username: String? = null
     private lateinit var uploadsContainer: LinearLayout
     private lateinit var uploadsContainer2: LinearLayout
+    private lateinit var buttonLocalDb: Button
+    private lateinit var database: UploadDataApp
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
             token = it.getString(ARG_TOKEN)
         }
+        database = UploadDataApp.getDatabase(requireContext())
     }
 
     override fun onCreateView(
@@ -38,9 +49,15 @@ class MyUploadsFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_my_uploads, container, false)
         uploadsContainer = view.findViewById(R.id.uploadsContainer)
         uploadsContainer2 = view.findViewById(R.id.uploadsContainer2)
+        buttonLocalDb = view.findViewById(R.id.buttonLocalDb)
 
         token?.let { fetchMyUploads(it) }
         token?.let { fetchAllUploads(it) }
+
+        buttonLocalDb.setOnClickListener {
+            val intent = Intent(context, LocalDbActivity::class.java)
+            startActivity(intent)
+        }
 
         return view
     }
@@ -102,13 +119,15 @@ class MyUploadsFragment : Fragment() {
         })
     }
 
-    private fun deleteFile(token: String, id: Int) {
+    private fun deleteFile(token: String, id: Int, latitude: Double, longitude: Double) {
         val apiService = ApiClient.instance.create(ApiService::class.java)
         val call = apiService.deleteFile("Bearer $token", id)
 
+        val uploadData = UploadData(username!!, latitude, longitude)
         call.enqueue(object : Callback<ResponseDeleteFile> {
             override fun onResponse(call: Call<ResponseDeleteFile>, response: Response<ResponseDeleteFile>) {
                 if (response.isSuccessful) {
+                    deletefromDb(uploadData)
                     Toast.makeText(context, "Song deleted successfully!", Toast.LENGTH_SHORT).show()
                 } else {
                     val errorMessage: String = when (response.code()) {
@@ -232,7 +251,7 @@ class MyUploadsFragment : Fragment() {
             val deleteFileButton = Button(context).apply {
                 text = "Delete File"
                 setOnClickListener {
-                    token?.let { it1 -> showDeleteConfirmationDialog(it1, upload.id) }
+                    token?.let { it1 -> showDeleteConfirmationDialog(it1, upload.id, upload.latitude, upload.longitude) }
                 }
             }
 
@@ -248,11 +267,11 @@ class MyUploadsFragment : Fragment() {
         }
     }
 
-    private fun showDeleteConfirmationDialog(token: String, id: Int) {
+    private fun showDeleteConfirmationDialog(token: String, id: Int, latitude: Double, longitude: Double) {
         val builder = AlertDialog.Builder(requireContext())
         builder.setMessage("Are you sure you want to delete this file?")
             .setPositiveButton("Yes") { dialog, _ ->
-                deleteFile(token, id)
+                deleteFile(token, id, latitude, longitude)
             }
             .setNegativeButton("No") { dialog, _ ->
                 dialog.dismiss()
@@ -324,12 +343,21 @@ class MyUploadsFragment : Fragment() {
         }
     }
 
+    private fun deletefromDb(uploadData: UploadData){
+        lifecycleScope.launch {
+            withContext(Dispatchers.IO) {
+                database.uploadDataDao().delete(uploadData)
+            }
+        }
+    }
+
     companion object {
         @JvmStatic
-        fun newInstance(token: String) =
+        fun newInstance(token: String, username: String) =
             MyUploadsFragment().apply {
                 arguments = Bundle().apply {
                     putString(ARG_TOKEN, token)
+                    putString(ARG_USERNAME, username)
                 }
             }
     }

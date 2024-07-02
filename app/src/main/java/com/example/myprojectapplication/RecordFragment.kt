@@ -1,6 +1,7 @@
 package com.example.myprojectapplication
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.graphics.Typeface
 import android.location.Location
@@ -18,6 +19,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
+import com.example.myprojectapplication.database.UploadDataApp
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import okhttp3.MediaType
@@ -28,7 +30,11 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.io.File
 import java.io.IOException
-import kotlin.math.pow
+import androidx.lifecycle.lifecycleScope
+import com.example.myprojectapplication.database.UploadData
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 private const val ARG_TOKEN = "token"
 private const val ARG_USERNAME = "username"
@@ -50,6 +56,7 @@ class RecordFragment : Fragment() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var recorder: MediaRecorder? = null
     private var mediaPlayer: MediaPlayer? = null
+    private lateinit var database: UploadDataApp
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,6 +65,7 @@ class RecordFragment : Fragment() {
             username = it.getString(ARG_USERNAME)
         }
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
+        database = UploadDataApp.getDatabase(requireContext())
     }
 
     override fun onCreateView(
@@ -196,6 +204,14 @@ class RecordFragment : Fragment() {
         }
     }
 
+    private fun insertDb(uploadData: UploadData){
+        lifecycleScope.launch {
+            withContext(Dispatchers.IO) {
+                database.uploadDataDao().insert(uploadData)
+            }
+        }
+    }
+
     private fun stopPlayingRecording() {
         mediaPlayer?.let {
             if (it.isPlaying) {
@@ -229,17 +245,21 @@ class RecordFragment : Fragment() {
         }
     }
 
+    @SuppressLint("SuspiciousIndentation")
     private fun uploadFile(token: String) {
         val file = File(recordingFilePath)
         val requestFile = RequestBody.create(MediaType.parse("audio/mpeg"), file)
         val body = MultipartBody.Part.createFormData("file", file.name, requestFile)
 
         val apiService = ApiClient.instance.create(ApiService::class.java)
-            val call = apiService.uploadFile("Bearer $token", longitude!!, latitude!!, body)
+        val call = apiService.uploadFile("Bearer $token", longitude!!, latitude!!, body)
+        val uploadData = UploadData(username!!, latitude!!, longitude!!)
             call.enqueue(object : Callback<ResponseUpload> {
                 override fun onResponse(call: Call<ResponseUpload>, response: Response<ResponseUpload>) {
                     val responseText = when (response.code()) {
-                        200 -> "File correctly uploaded. in $recordingFilePath"
+                        200 -> {
+                            "File correctly uploaded. in $recordingFilePath"
+                        }
                         401 -> {
                             context?.let { utilLogin.forceLogin(it) }
                             "User is not authenticated."
@@ -247,6 +267,10 @@ class RecordFragment : Fragment() {
                         413 -> "File is too big."
                         415 -> "File is not a supported audio file."
                         else -> "Unknown error."
+                    }
+                    if(response.code()==200){
+                        insertDb(uploadData)
+                        Toast.makeText(context, "Dati Inseriti nel DB", Toast.LENGTH_SHORT).show()
                     }
                     addResponseToContainer(responseText)
                 }
