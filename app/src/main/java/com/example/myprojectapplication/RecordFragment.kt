@@ -75,7 +75,7 @@ class RecordFragment : Fragment() {
 
         btnListener.setOnClickListener {
             if (isRecording) {
-                latitude?.let { it1 -> longitude?.let { it2 -> stopRecording(it1, it2) } }
+                stopRecording()
             } else {
                 startRecording()
             }
@@ -135,7 +135,7 @@ class RecordFragment : Fragment() {
         }
     }
 
-    private fun stopRecording(latitude: Double, longitude: Double) {
+    private fun stopRecording() {
         recorder?.apply {
             stop()
             release()
@@ -143,7 +143,7 @@ class RecordFragment : Fragment() {
         recorder = null
         btnListener.text = "Start Listening"
         isRecording = false
-        uploadFile(token!!, latitude, longitude)
+        uploadFile(token!!)
     }
 
     private fun deleteRecording() {
@@ -229,13 +229,13 @@ class RecordFragment : Fragment() {
         }
     }
 
-    private fun uploadFile(token: String, latitude: Double, longitude: Double) {
+    private fun uploadFile(token: String) {
         val file = File(recordingFilePath)
         val requestFile = RequestBody.create(MediaType.parse("audio/mpeg"), file)
         val body = MultipartBody.Part.createFormData("file", file.name, requestFile)
 
         val apiService = ApiClient.instance.create(ApiService::class.java)
-            val call = apiService.uploadFile("Bearer $token", longitude, latitude, body)
+            val call = apiService.uploadFile("Bearer $token", longitude!!, latitude!!, body)
             call.enqueue(object : Callback<ResponseUpload> {
                 override fun onResponse(call: Call<ResponseUpload>, response: Response<ResponseUpload>) {
                     val responseText = when (response.code()) {

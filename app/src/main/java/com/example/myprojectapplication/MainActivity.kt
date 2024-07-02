@@ -29,6 +29,8 @@ class MainActivity : AppCompatActivity() {
         val welcomeMsgString = welcomeMsg.text.toString()
         welcomeMsg.text = welcomeMsgString + username
 
+        replaceFragment(RecordFragment.newInstance(clientToken ?: "", username ?: ""))
+
         btnRecord.setOnClickListener {
             replaceFragment(RecordFragment.newInstance(clientToken ?: "", username ?: ""))
         }
