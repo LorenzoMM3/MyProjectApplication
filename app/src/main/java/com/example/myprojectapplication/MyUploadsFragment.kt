@@ -38,6 +38,7 @@ class MyUploadsFragment : Fragment() {
         super.onCreate(savedInstanceState)
         arguments?.let {
             token = it.getString(ARG_TOKEN)
+            username = it.getString(ARG_USERNAME)
         }
         database = UploadDataApp.getDatabase(requireContext())
     }
@@ -123,12 +124,14 @@ class MyUploadsFragment : Fragment() {
         val apiService = ApiClient.instance.create(ApiService::class.java)
         val call = apiService.deleteFile("Bearer $token", id)
 
-        val uploadData = UploadData(username!!, latitude, longitude)
         call.enqueue(object : Callback<ResponseDeleteFile> {
             override fun onResponse(call: Call<ResponseDeleteFile>, response: Response<ResponseDeleteFile>) {
                 if (response.isSuccessful) {
-                    deletefromDb(uploadData)
                     Toast.makeText(context, "Song deleted successfully!", Toast.LENGTH_SHORT).show()
+                    if(response.code()==200){
+                        deleteFromDb(username!!, latitude, longitude)
+                        Toast.makeText(context, "Deleted from DB", Toast.LENGTH_SHORT).show()
+                    }
                 } else {
                     val errorMessage: String = when (response.code()) {
                         401 -> {
@@ -343,10 +346,10 @@ class MyUploadsFragment : Fragment() {
         }
     }
 
-    private fun deletefromDb(uploadData: UploadData){
+    private fun deleteFromDb(username: String, latitude: Double, longitude: Double){
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
-                database.uploadDataDao().delete(uploadData)
+                database.uploadDataDao().delete(username, latitude, longitude)
             }
         }
     }

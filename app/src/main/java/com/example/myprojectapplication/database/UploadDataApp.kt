@@ -19,7 +19,7 @@ abstract class UploadDataApp : RoomDatabase() {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     UploadDataApp::class.java,
-                    "app_database"
+                    "upload_data_app"
                 ).build()
                 INSTANCE = instance
                 instance

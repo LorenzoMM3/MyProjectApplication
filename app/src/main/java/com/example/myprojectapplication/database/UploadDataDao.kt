@@ -12,8 +12,11 @@ interface UploadDataDao {
     @Insert
     fun insert(uploadData: UploadData)
 
-    @Delete
-    fun delete(uploadData: UploadData)
+    @Query("DELETE FROM upload_data WHERE username = :username AND latitude = :latitude AND longitude = :longitude")
+    fun delete(username: String, latitude: Double, longitude: Double)
+
+    @Query("DELETE FROM upload_data")
+    fun deleteAll()
 
     @Query("SELECT * FROM upload_data WHERE username = :username AND latitude = :latitude AND longitude = :longitude")
     fun getUploadData(username: String, latitude: Double, longitude: Double): LiveData<UploadData?>
