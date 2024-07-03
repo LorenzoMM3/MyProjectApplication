@@ -72,6 +72,8 @@ class MyUploadsFragment : Fragment() {
 
         buttonLocalDb.setOnClickListener {
             val intent = Intent(context, LocalDbActivity::class.java)
+            intent.putExtra("username", username)
+            intent.putExtra("clientToken", token)
             startActivity(intent)
         }
 

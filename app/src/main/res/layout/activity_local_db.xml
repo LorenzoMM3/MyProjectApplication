@@ -17,6 +17,16 @@
         android:textSize="18sp" />
 
     <Button
+        android:id="@+id/btnUpload"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:backgroundTint="@color/green"
+        android:text="Upload Files"
+        android:textColor="@color/white"
+        android:textSize="18sp" />
+
+    <Button
         android:id="@+id/btnBack"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

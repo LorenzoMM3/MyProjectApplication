@@ -3,7 +3,9 @@ package com.example.myprojectapplication.database
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class UploadDataViewModel(private val repository: UploadDataRepository) : ViewModel() {
 
@@ -15,6 +17,12 @@ class UploadDataViewModel(private val repository: UploadDataRepository) : ViewMo
 
     fun insert(uploadData: UploadData) = viewModelScope.launch {
         repository.insert(uploadData)
+    }
+
+    fun getAllUploadDataBlocking(){
+        viewModelScope.launch{
+            repository.getAllUploadDataBlocking()
+        }
     }
 
     fun delete(username: String, latitude: Double, longitude: Double) = viewModelScope.launch {

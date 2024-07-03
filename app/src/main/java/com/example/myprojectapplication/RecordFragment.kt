@@ -152,7 +152,7 @@ class RecordFragment : Fragment() {
         recorder = null
         btnListener.text = "Start Listening"
         isRecording = false
-        uploadFile(token!!)
+        uploadFile()
     }
 
     private fun deleteRecording() {
@@ -239,41 +239,10 @@ class RecordFragment : Fragment() {
     }
 
     @SuppressLint("SuspiciousIndentation")
-    private fun uploadFile(token: String) {
-        val file = File(recordingFilePath)
-        val requestFile = RequestBody.create(MediaType.parse("audio/mpeg"), file)
-        val body = MultipartBody.Part.createFormData("file", file.name, requestFile)
-
-        val apiService = ApiClient.instance.create(ApiService::class.java)
-        val call = apiService.uploadFile("Bearer $token", longitude!!, latitude!!, body)
+    private fun uploadFile() {
         val uploadData = UploadData(username!!, latitude!!, longitude!!)
-            call.enqueue(object : Callback<ResponseUpload> {
-                override fun onResponse(call: Call<ResponseUpload>, response: Response<ResponseUpload>) {
-                    val responseText = when (response.code()) {
-                        200 -> {
-                            "File correctly uploaded. in $recordingFilePath"
-                        }
-                        401 -> {
-                            context?.let { utilLogin.forceLogin(it) }
-                            "User is not authenticated."
-                        }
-                        413 -> "File is too big."
-                        415 -> "File is not a supported audio file."
-                        else -> "Unknown error."
-                    }
-                    if(response.code()==200){
-                        insertUploadData(uploadData)
-                        Toast.makeText(context, "Dati Inseriti in UploadData", Toast.LENGTH_SHORT).show()
-                        insertInfoAudio(response.body()!!)
-                        Toast.makeText(context, "Dati Inseriti in InfoAudio", Toast.LENGTH_SHORT).show()
-                    }
-                    addResponseToContainer(responseText)
-                }
-
-                override fun onFailure(call: Call<ResponseUpload>, t: Throwable) {
-                    addResponseToContainer("Upload failed: ${t.message}")
-                }
-            })
+        insertUploadData(uploadData)
+        addResponseToContainer("File Recorded. Metadata written on Database Upload Data.")
     }
 
     private fun addResponseToContainer(message: String) {
@@ -295,45 +264,6 @@ class RecordFragment : Fragment() {
             }
         }
     }
-
-    private fun insertInfoAudio(responseUpload: ResponseUpload) {
-
-        fun formatPercentage(value: Double): String {
-            return String.format("%.2f%%", value * 100)
-        }
-
-        val stringMood = responseUpload.mood?.entries?.sortedByDescending { it.value }!!.take(5).forEach { (key, value) ->
-            ("$key: ${formatPercentage(value)}")
-        }.toString()
-
-        val stringGenre = responseUpload.genre?.entries?.sortedByDescending { it.value }!!.take(5).forEach { (key, value) ->
-            ("$key: ${formatPercentage(value)}")
-        }.toString()
-
-        val stringInstrument = responseUpload.instrument?.entries?.sortedByDescending { it.value }!!.take(5).forEach { (key, value) ->
-            ("$key: ${formatPercentage(value)} - ")
-        }.toString()
-
-        val infoAudio = InfoAudio(
-            longitude = longitude!!,
-            latitude = latitude!!,
-            bpm = responseUpload.bpm!!,
-            danceability = responseUpload.danceability!!,
-            loudness = responseUpload.loudness!!,
-            mood = stringMood,
-            genre = stringGenre,
-            instrument = stringInstrument,
-            audioFilePath = recordingFilePath,
-        )
-
-        lifecycleScope.launch {
-            withContext(Dispatchers.IO) {
-                val db = InfoAudioApp.getDatabase(requireContext())
-                db.infoAudioDao().insert(infoAudio)
-            }
-        }
-    }
-
 
     override fun onRequestPermissionsResult(
         requestCode: Int, permissions: Array<String>, grantResults: IntArray

@@ -22,4 +22,7 @@ interface UploadDataDao {
 
     @Query("SELECT * FROM upload_data")
     fun getAllUploadData(): LiveData<List<UploadData>>
+
+    @Query("SELECT * FROM upload_data")
+    fun getAllUploadDataBlocking(): List<UploadData>
 }

@@ -16,6 +16,12 @@ class UploadDataRepository(private val uploadDataDao: UploadDataDao) {
         return uploadDataDao.getUploadData(username, latitude, longitude)
     }
 
+    suspend fun getAllUploadDataBlocking(){
+        withContext(Dispatchers.IO){
+            uploadDataDao.getAllUploadDataBlocking()
+        }
+    }
+
     suspend fun insert(uploadData: UploadData) {
         uploadDataDao.insert(uploadData)
     }
