@@ -1,10 +1,16 @@
 package com.example.myprojectapplication.database
 
 import androidx.lifecycle.LiveData
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class UploadDataRepository(private val uploadDataDao: UploadDataDao) {
 
     val allUploadData: LiveData<List<UploadData>> = uploadDataDao.getAllUploadData()
+
+    suspend fun deleteAll() {
+        uploadDataDao.deleteAll()
+    }
 
     fun getUploadData(username: String, latitude: Double, longitude: Double): LiveData<UploadData?> {
         return uploadDataDao.getUploadData(username, latitude, longitude)
@@ -15,6 +21,8 @@ class UploadDataRepository(private val uploadDataDao: UploadDataDao) {
     }
 
     suspend fun delete(username: String, latitude: Double, longitude: Double) {
-        uploadDataDao.delete(username, latitude, longitude)
+        withContext(Dispatchers.IO) {
+            uploadDataDao.delete(username, latitude, longitude)
+        }
     }
 }

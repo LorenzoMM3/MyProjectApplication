@@ -10,40 +10,36 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.myprojectapplication.viewmodel.InfoAudioViewModel
+import com.example.myprojectapplication.viewmodel.InfoAudioViewModelFactory
+import com.example.myprojectapplication.repository.InfoAudioRepository
 import com.example.myprojectapplication.database.InfoAudioApp
-import com.example.myprojectapplication.database.UploadDataAdapter
-import com.example.myprojectapplication.database.UploadDataApp
-import com.example.myprojectapplication.database.UploadDataRepository
-import com.example.myprojectapplication.database.UploadDataViewModel
-import com.example.myprojectapplication.database.UploadDataViewModelFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class LocalDbActivity : AppCompatActivity() {
+class InfoAudioActivity : AppCompatActivity() {
 
     private lateinit var recyclerView: RecyclerView
-    private lateinit var btnDeleteAll: Button
-    private lateinit var adapter: UploadDataAdapter
-    private val uploadDataViewModel: UploadDataViewModel by viewModels {
-        val dao = UploadDataApp.getDatabase(application).uploadDataDao()
-        val repository = UploadDataRepository(dao)
-        UploadDataViewModelFactory(repository)
+    private lateinit var adapter: InfoAudioAdapter
+    private val infoAudioViewModel: InfoAudioViewModel by viewModels {
+        val dao = InfoAudioApp.getDatabase(application).infoAudioDao()
+        val repository = InfoAudioRepository(dao)
+        InfoAudioViewModelFactory(repository)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_local_db)
+        setContentView(R.layout.activity_info_audio)
 
         recyclerView = findViewById(R.id.recyclerView)
-        btnDeleteAll = findViewById(R.id.btnDeleteAll)
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        adapter = UploadDataAdapter(emptyList())
+        adapter = InfoAudioAdapter()
         recyclerView.adapter = adapter
 
-        uploadDataViewModel.allUploadData.observe(this, Observer { dataList ->
-            adapter.setData(dataList)
+        infoAudioViewModel.allInfoAudio.observe(this, Observer { infoAudios ->
+            infoAudios?.let { adapter.submitList(it) }
         })
 
         val btnBack: Button = findViewById(R.id.btnBack)
@@ -51,6 +47,7 @@ class LocalDbActivity : AppCompatActivity() {
             onBackPressed()
         }
 
+        val btnDeleteAll: Button = findViewById(R.id.btnDeleteAll)
         btnDeleteAll.setOnClickListener {
             deleteAllFromDb()
         }
@@ -62,13 +59,14 @@ class LocalDbActivity : AppCompatActivity() {
             .setPositiveButton("Yes") { dialog, _ ->
                 lifecycleScope.launch {
                     withContext(Dispatchers.IO) {
-                        val db = UploadDataApp.getDatabase(this@LocalDbActivity)
-                        db.uploadDataDao().deleteAll()
+                        val db = InfoAudioApp.getDatabase(this@InfoAudioActivity)
+                        db.infoAudioDao().deleteAll()
                     }
                     withContext(Dispatchers.Main) {
-                        Toast.makeText(this@LocalDbActivity, "All elements deleted from DB", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@InfoAudioActivity, "All elements deleted from DB", Toast.LENGTH_SHORT).show()
                     }
-                }            }
+                }
+            }
             .setNegativeButton("No") { dialog, _ ->
                 dialog.dismiss()
             }

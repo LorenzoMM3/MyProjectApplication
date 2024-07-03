@@ -20,7 +20,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyProjectApplication"
         tools:targetApi="31">
-
+        <activity
+            android:name=".InfoAudioActivity"
+            android:exported="false" />
         <activity
             android:name=".LocalDbActivity"
             android:exported="false" />
@@ -45,6 +47,7 @@
             android:theme="@style/Theme.MyProjectApplication">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -53,4 +56,5 @@
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
     </application>
+
 </manifest>

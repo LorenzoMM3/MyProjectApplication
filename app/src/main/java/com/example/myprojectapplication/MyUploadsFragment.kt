@@ -12,13 +12,16 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
-import com.example.myprojectapplication.database.UploadData
+import androidx.fragment.app.viewModels
+import com.example.myprojectapplication.database.InfoAudioApp
 import com.example.myprojectapplication.database.UploadDataApp
+import com.example.myprojectapplication.database.UploadDataRepository
+import com.example.myprojectapplication.database.UploadDataViewModel
+import com.example.myprojectapplication.database.UploadDataViewModelFactory
+import com.example.myprojectapplication.repository.InfoAudioRepository
 import com.example.myprojectapplication.utilLogin.forceLogin
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import com.example.myprojectapplication.viewmodel.InfoAudioViewModel
+import com.example.myprojectapplication.viewmodel.InfoAudioViewModelFactory
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -32,7 +35,19 @@ class MyUploadsFragment : Fragment() {
     private lateinit var uploadsContainer: LinearLayout
     private lateinit var uploadsContainer2: LinearLayout
     private lateinit var buttonLocalDb: Button
-    private lateinit var database: UploadDataApp
+    private lateinit var btnInfoAudio: Button
+
+    private val uploadDataViewModel: UploadDataViewModel by viewModels {
+        val dao = UploadDataApp.getDatabase(requireContext()).uploadDataDao()
+        val repository = UploadDataRepository(dao)
+        UploadDataViewModelFactory(repository)
+    }
+
+    private val infoAudioViewModel: InfoAudioViewModel by viewModels {
+        val dao = InfoAudioApp.getDatabase(requireContext()).infoAudioDao()
+        val repository = InfoAudioRepository(dao)
+        InfoAudioViewModelFactory(repository)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,7 +55,6 @@ class MyUploadsFragment : Fragment() {
             token = it.getString(ARG_TOKEN)
             username = it.getString(ARG_USERNAME)
         }
-        database = UploadDataApp.getDatabase(requireContext())
     }
 
     override fun onCreateView(
@@ -51,12 +65,18 @@ class MyUploadsFragment : Fragment() {
         uploadsContainer = view.findViewById(R.id.uploadsContainer)
         uploadsContainer2 = view.findViewById(R.id.uploadsContainer2)
         buttonLocalDb = view.findViewById(R.id.buttonLocalDb)
+        btnInfoAudio = view.findViewById(R.id.buttonLocalDb2)
 
         token?.let { fetchMyUploads(it) }
         token?.let { fetchAllUploads(it) }
 
         buttonLocalDb.setOnClickListener {
             val intent = Intent(context, LocalDbActivity::class.java)
+            startActivity(intent)
+        }
+
+        btnInfoAudio.setOnClickListener {
+            val intent = Intent(context, InfoAudioActivity::class.java)
             startActivity(intent)
         }
 
@@ -100,9 +120,9 @@ class MyUploadsFragment : Fragment() {
             override fun onResponse(call: Call<List<ResponseAllUploads>>, response: Response<List<ResponseAllUploads>>) {
                 if (response.isSuccessful) {
                     val uploads = response.body()
-                        uploads?.let {
-                            displayAllUploads(it)
-                        }
+                    uploads?.let {
+                        displayAllUploads(it)
+                    }
                 } else {
                     val errorMessage: String = when (response.code()) {
                         401 -> {
@@ -129,8 +149,10 @@ class MyUploadsFragment : Fragment() {
                 if (response.isSuccessful) {
                     Toast.makeText(context, "Song deleted successfully!", Toast.LENGTH_SHORT).show()
                     if(response.code()==200){
-                        deleteFromDb(username!!, latitude, longitude)
-                        Toast.makeText(context, "Deleted from DB", Toast.LENGTH_SHORT).show()
+                        deleteFromUploadData(username!!, latitude, longitude)
+                        Toast.makeText(context, "Deleted from Upload Data", Toast.LENGTH_SHORT).show()
+                        deleteFromInfoAudio(latitude, longitude)
+                        Toast.makeText(context, "Deleted from Info Audio", Toast.LENGTH_SHORT).show()
                     }
                 } else {
                     val errorMessage: String = when (response.code()) {
@@ -346,12 +368,12 @@ class MyUploadsFragment : Fragment() {
         }
     }
 
-    private fun deleteFromDb(username: String, latitude: Double, longitude: Double){
-        lifecycleScope.launch {
-            withContext(Dispatchers.IO) {
-                database.uploadDataDao().delete(username, latitude, longitude)
-            }
-        }
+    private fun deleteFromUploadData(username: String, latitude: Double, longitude: Double){
+        uploadDataViewModel.delete(username, latitude, longitude)
+    }
+
+    private fun deleteFromInfoAudio(latitude: Double, longitude: Double){
+        infoAudioViewModel.delete(latitude, longitude)
     }
 
     companion object {

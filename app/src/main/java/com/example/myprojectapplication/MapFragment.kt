@@ -72,7 +72,6 @@ class MapFragment : Fragment() {
                     startMarker.position = userLocation
                     startMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
 
-                    // Imposta il pallino verde :)
                     val icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_location) as VectorDrawable
                     startMarker.icon = icon
 

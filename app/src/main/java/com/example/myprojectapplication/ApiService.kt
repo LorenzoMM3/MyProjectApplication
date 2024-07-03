@@ -25,7 +25,23 @@ data class Tags(val bpm: Int, val danceability: Double, val loudness: Double, va
 data class ResponseHideFile(val detail: String)
 data class ResponseShowFile(val detail: String)
 data class ResponseDeleteFile(val detail: String)
-data class ResponseUpload(val detail: String)
+data class ResponseUpload(
+    val detail: String,
+    val longitude: Double?,
+    val latitude: Double?,
+    val bpm: Int?,
+    val danceability: Double?,
+    val loudness: Double?,
+    val mood: Map<String, Double>?,
+    val genre: Map<String, Double>?,
+    val instrument: Map<String, Double>?,
+)
+
+{    fun toSingleString(): String {
+        return "detail: $detail, longitude: $longitude, latitude: $latitude, bpm: $bpm, danceability: $danceability, loudness: $loudness, mood: $mood, genre: $genre, instrument: $instrument"
+    }
+}
+
 
 interface ApiService {
     @POST("auth")

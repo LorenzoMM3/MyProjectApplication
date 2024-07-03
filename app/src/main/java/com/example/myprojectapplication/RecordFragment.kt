@@ -31,10 +31,13 @@ import retrofit2.Response
 import java.io.File
 import java.io.IOException
 import androidx.lifecycle.lifecycleScope
+import com.example.myprojectapplication.database.InfoAudio
+import com.example.myprojectapplication.database.InfoAudioApp
 import com.example.myprojectapplication.database.UploadData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import retrofit2.http.Body
 
 private const val ARG_TOKEN = "token"
 private const val ARG_USERNAME = "username"
@@ -202,14 +205,6 @@ class RecordFragment : Fragment() {
         }
     }
 
-    private fun insertDb(uploadData: UploadData){
-        lifecycleScope.launch {
-            withContext(Dispatchers.IO) {
-                database.uploadDataDao().insert(uploadData)
-            }
-        }
-    }
-
     private fun stopPlayingRecording() {
         mediaPlayer?.let {
             if (it.isPlaying) {
@@ -267,8 +262,10 @@ class RecordFragment : Fragment() {
                         else -> "Unknown error."
                     }
                     if(response.code()==200){
-                        insertDb(uploadData)
-                        Toast.makeText(context, "Dati Inseriti nel DB", Toast.LENGTH_SHORT).show()
+                        insertUploadData(uploadData)
+                        Toast.makeText(context, "Dati Inseriti in UploadData", Toast.LENGTH_SHORT).show()
+                        insertInfoAudio(response.body()!!)
+                        Toast.makeText(context, "Dati Inseriti in InfoAudio", Toast.LENGTH_SHORT).show()
                     }
                     addResponseToContainer(responseText)
                 }
@@ -290,6 +287,53 @@ class RecordFragment : Fragment() {
         }
         uploadsContainer2.addView(textView)
     }
+
+    private fun insertUploadData(uploadData: UploadData){
+        lifecycleScope.launch {
+            withContext(Dispatchers.IO) {
+                database.uploadDataDao().insert(uploadData)
+            }
+        }
+    }
+
+    private fun insertInfoAudio(responseUpload: ResponseUpload) {
+
+        fun formatPercentage(value: Double): String {
+            return String.format("%.2f%%", value * 100)
+        }
+
+        val stringMood = responseUpload.mood?.entries?.sortedByDescending { it.value }!!.take(5).forEach { (key, value) ->
+            ("$key: ${formatPercentage(value)}")
+        }.toString()
+
+        val stringGenre = responseUpload.genre?.entries?.sortedByDescending { it.value }!!.take(5).forEach { (key, value) ->
+            ("$key: ${formatPercentage(value)}")
+        }.toString()
+
+        val stringInstrument = responseUpload.instrument?.entries?.sortedByDescending { it.value }!!.take(5).forEach { (key, value) ->
+            ("$key: ${formatPercentage(value)} - ")
+        }.toString()
+
+        val infoAudio = InfoAudio(
+            longitude = longitude!!,
+            latitude = latitude!!,
+            bpm = responseUpload.bpm!!,
+            danceability = responseUpload.danceability!!,
+            loudness = responseUpload.loudness!!,
+            mood = stringMood,
+            genre = stringGenre,
+            instrument = stringInstrument,
+            audioFilePath = recordingFilePath,
+        )
+
+        lifecycleScope.launch {
+            withContext(Dispatchers.IO) {
+                val db = InfoAudioApp.getDatabase(requireContext())
+                db.infoAudioDao().insert(infoAudio)
+            }
+        }
+    }
+
 
     override fun onRequestPermissionsResult(
         requestCode: Int, permissions: Array<String>, grantResults: IntArray

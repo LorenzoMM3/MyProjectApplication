@@ -20,7 +20,18 @@
             android:layout_marginVertical="5dp"
             android:backgroundTint="@color/green"
             android:padding="10dp"
-            android:text="Local Database"
+            android:text="Upload Data"
+            android:textSize="20sp" />
+
+        <Button
+            android:id="@+id/buttonLocalDb2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="15dp"
+            android:layout_marginVertical="5dp"
+            android:backgroundTint="@color/green"
+            android:padding="10dp"
+            android:text="Info Audio"
             android:textSize="20sp" />
 
         <TextView

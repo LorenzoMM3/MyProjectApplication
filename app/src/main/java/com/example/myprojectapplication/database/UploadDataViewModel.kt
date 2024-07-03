@@ -18,6 +18,12 @@ class UploadDataViewModel(private val repository: UploadDataRepository) : ViewMo
     }
 
     fun delete(username: String, latitude: Double, longitude: Double) = viewModelScope.launch {
-        repository.delete(username, latitude, longitude)
+        viewModelScope.launch {
+            repository.delete(username, latitude, longitude)
+        }
+    }
+
+    fun deleteAll() = viewModelScope.launch {
+        repository.deleteAll()
     }
 }
