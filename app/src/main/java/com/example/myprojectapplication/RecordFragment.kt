@@ -118,28 +118,26 @@ class RecordFragment : Fragment() {
             return
         }
 
-        addResponseToContainer("I am Listening... - latitude: $latitude - longitude: $longitude - username: $username - ")
-
         if (latitude != null && longitude != null && username != null) {
+            addResponseToContainer("I am Listening... - latitude: $latitude - longitude: $longitude - username: $username - ")
             recordingFilePath = "${requireActivity().filesDir.absolutePath}/${username}_${latitude}_${longitude}.mp3"
-        } else {
-            recordingFilePath = "${requireActivity().filesDir.absolutePath}/audioLastTest.mp3"
-        }
+            recorder = MediaRecorder().apply {
+                setAudioSource(MediaRecorder.AudioSource.MIC)
+                setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
+                setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
+                setOutputFile(recordingFilePath)
 
-        recorder = MediaRecorder().apply {
-            setAudioSource(MediaRecorder.AudioSource.MIC)
-            setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
-            setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
-            setOutputFile(recordingFilePath)
-
-            try {
-                prepare()
-                start()
-                btnListener.text = "Stop Listening"
-                isRecording = true
-            } catch (e: IOException) {
-                Log.e("RecordFragment", "prepare() failed: ${e.message}")
+                try {
+                    prepare()
+                    start()
+                    btnListener.text = "Stop Listening"
+                    isRecording = true
+                } catch (e: IOException) {
+                    Log.e("RecordFragment", "prepare() failed: ${e.message}")
+                }
             }
+        } else {
+            addResponseToContainer("Error: impossible to continue - latitude: $latitude - longitude: $longitude - username: $username - ")
         }
     }
 
