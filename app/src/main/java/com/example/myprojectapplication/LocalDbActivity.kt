@@ -79,7 +79,7 @@ class LocalDbActivity : AppCompatActivity() {
 
     private fun deleteAllFromDb() {
         val builder = AlertDialog.Builder(this)
-        builder.setMessage("Are you sure you want to delete all files from this Db?")
+        builder.setMessage("Do you want to delete all files from this Db? You won't be able to upload them.")
             .setPositiveButton("Yes") { dialog, _ ->
                 lifecycleScope.launch {
                     withContext(Dispatchers.IO) {
@@ -89,7 +89,8 @@ class LocalDbActivity : AppCompatActivity() {
                     withContext(Dispatchers.Main) {
                         Toast.makeText(this@LocalDbActivity, "All elements deleted from DB", Toast.LENGTH_SHORT).show()
                     }
-                }            }
+                }
+            }
             .setNegativeButton("No") { dialog, _ ->
                 dialog.dismiss()
             }
@@ -98,16 +99,25 @@ class LocalDbActivity : AppCompatActivity() {
     }
 
     private fun uploadAllFiles(token: String) {
-        lifecycleScope.launch {
-            val db = UploadDataApp.getDatabase(this@LocalDbActivity)
-            val uploadDataList = withContext(Dispatchers.IO) {
-                db.uploadDataDao().getAllUploadDataBlocking()
-            }
+        val builder = AlertDialog.Builder(this)
+        builder.setMessage("Do you want to upload all files from this Db?")
+            .setPositiveButton("Yes") { dialog, _ ->
+                lifecycleScope.launch {
+                    val db = UploadDataApp.getDatabase(this@LocalDbActivity)
+                    val uploadDataList = withContext(Dispatchers.IO) {
+                        db.uploadDataDao().getAllUploadDataBlocking()
+                    }
 
-            uploadDataList.forEach { uploadData ->
-                uploadFile(token, uploadData)
+                    uploadDataList.forEach { uploadData ->
+                        uploadFile(token, uploadData)
+                    }
+                }
             }
-        }
+            .setNegativeButton("No") { dialog, _ ->
+                dialog.dismiss()
+            }
+        val alert = builder.create()
+        alert.show()
     }
 
     private fun uploadFile(token: String, uploadData: UploadData) {

@@ -17,6 +17,7 @@ import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import com.example.myprojectapplication.database.UploadDataApp
@@ -31,6 +32,7 @@ import retrofit2.Response
 import java.io.File
 import java.io.IOException
 import androidx.lifecycle.lifecycleScope
+import com.example.myprojectapplication.UtilNetwork.isWifiConnected
 import com.example.myprojectapplication.database.InfoAudio
 import com.example.myprojectapplication.database.InfoAudioApp
 import com.example.myprojectapplication.database.UploadData
@@ -146,6 +148,7 @@ class RecordFragment : Fragment() {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun stopRecording() {
         recorder?.apply {
             stop()
@@ -154,9 +157,24 @@ class RecordFragment : Fragment() {
         recorder = null
         btnListener.text = "Start Listening"
         isRecording = false
-        uploadFile()
+
+        if(isWifiConnected(requireContext())){
+            uploadNowFile(token!!)
+        } else {
+            val builder = AlertDialog.Builder(requireContext())
+            builder.setMessage("You don't have a WiFi connection. Do you want to upload the song with your mobile data or upload it later?")
+                .setPositiveButton("Upload now with mobile data") { dialog, _ ->
+                    uploadNowFile(token!!)
+                }
+                .setNegativeButton("Upload Later") { dialog, _ ->
+                    uploadFileDb()
+                }
+            val alert = builder.create()
+            alert.show()
+        }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun deleteRecording() {
         recorder?.apply {
             stop()
@@ -241,10 +259,45 @@ class RecordFragment : Fragment() {
     }
 
     @SuppressLint("SuspiciousIndentation")
-    private fun uploadFile() {
+    private fun uploadFileDb() {
         val uploadData = UploadData(username!!, latitude!!, longitude!!)
         insertUploadData(uploadData)
         addResponseToContainer("File Recorded. Metadata written on Database Upload Data.")
+    }
+
+    @SuppressLint("SuspiciousIndentation")
+    private fun uploadNowFile(token: String) {
+        val file = File(recordingFilePath)
+        val requestFile = RequestBody.create(MediaType.parse("audio/mpeg"), file)
+        val body = MultipartBody.Part.createFormData("file", file.name, requestFile)
+        val apiService = ApiClient.instance.create(ApiService::class.java)
+        val call = apiService.uploadFile("Bearer $token", longitude!!, latitude!!, body)
+        call.enqueue(object : Callback<ResponseUpload> {
+            override fun onResponse(call: Call<ResponseUpload>, response: Response<ResponseUpload>) {
+                if (response.isSuccessful) {
+                    val responseUpload = response.body()
+                    if (responseUpload != null) {
+                        addResponseToContainer("File Uploaded. Directory: $recordingFilePath")
+                        insertInfoAudio(responseUpload, recordingFilePath, longitude!!, latitude!!)
+                    }
+                } else {
+                    val responseText = when (response.code()) {
+                        401 -> {
+                            requireContext().let { utilLogin.forceLogin(it) }
+                            "User is not authenticated."
+                        }
+                        413 -> "File is too big."
+                        415 -> "File is not a supported audio file."
+                        else -> "Unknown error."
+                    }
+                    addResponseToContainer("Error: $responseText")
+                }
+            }
+
+            override fun onFailure(call: Call<ResponseUpload>, t: Throwable) {
+                Toast.makeText(requireContext(), "Error: ${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 
     private fun addResponseToContainer(message: String) {
@@ -263,6 +316,44 @@ class RecordFragment : Fragment() {
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
                 database.uploadDataDao().insert(uploadData)
+            }
+        }
+    }
+
+    private fun insertInfoAudio(responseUpload: ResponseUpload, recordingFilePath: String, longitude: Double, latitude: Double) {
+
+        fun formatPercentage(value: Double): String {
+            return String.format("%.2f%%", value * 100)
+        }
+
+        val stringMood = responseUpload.mood?.entries?.sortedByDescending { it.value }?.take(5)?.joinToString { (key, value) ->
+            "$key: ${formatPercentage(value)}"
+        }.orEmpty()
+
+        val stringGenre = responseUpload.genre?.entries?.sortedByDescending { it.value }?.take(5)?.joinToString { (key, value) ->
+            "$key: ${formatPercentage(value)}"
+        }.orEmpty()
+
+        val stringInstrument = responseUpload.instrument?.entries?.sortedByDescending { it.value }?.take(5)?.joinToString { (key, value) ->
+            "$key: ${formatPercentage(value)}"
+        }.orEmpty()
+
+        val infoAudio = InfoAudio(
+            longitude = longitude,
+            latitude = latitude,
+            bpm = responseUpload.bpm!!,
+            danceability = responseUpload.danceability!!,
+            loudness = responseUpload.loudness!!,
+            mood = stringMood,
+            genre = stringGenre,
+            instrument = stringInstrument,
+            audioFilePath = recordingFilePath
+        )
+
+        lifecycleScope.launch {
+            withContext(Dispatchers.IO) {
+                val db = InfoAudioApp.getDatabase(requireContext())
+                db.infoAudioDao().insert(infoAudio)
             }
         }
     }

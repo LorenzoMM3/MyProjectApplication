@@ -10,8 +10,49 @@
         android:id="@+id/infoTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginVertical="5dp"
+        android:padding="3dp"
         android:text="Sample Text"
         android:textSize="18sp"
         android:textStyle="bold" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="end">
+
+        <Button
+            android:id="@+id/btnPlay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginVertical="3dp"
+            android:backgroundTint="@color/green"
+            android:text="Play"
+            android:textSize="18sp" />
+
+        <Button
+            android:id="@+id/btnPause"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginVertical="3dp"
+            android:backgroundTint="@color/green"
+            android:text="Pause"
+            android:textSize="18sp" />
+
+        <Button
+            android:id="@+id/btnStop"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginVertical="3dp"
+            android:backgroundTint="@color/green"
+            android:text="Stop"
+            android:textSize="18sp" />
+
+    </LinearLayout>
 
 </LinearLayout>

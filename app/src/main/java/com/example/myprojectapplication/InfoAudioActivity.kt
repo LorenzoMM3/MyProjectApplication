@@ -1,6 +1,5 @@
 package com.example.myprojectapplication
 
-import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.Toast
@@ -11,6 +10,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.myprojectapplication.database.InfoAudioAdapter
 import com.example.myprojectapplication.viewmodel.InfoAudioViewModel
 import com.example.myprojectapplication.viewmodel.InfoAudioViewModelFactory
 import com.example.myprojectapplication.repository.InfoAudioRepository
@@ -45,7 +45,17 @@ class InfoAudioActivity : AppCompatActivity() {
 
         val btnBack: Button = findViewById(R.id.btnBack)
         btnBack.setOnClickListener {
-            onBackPressed()
+            if(!UtilNetwork.isNetworkAvailable(this)){
+                val builder = AlertDialog.Builder(this)
+                builder.setMessage("You still have no internet connection. Please restore the connection and press 'Go Back' to use the app.")
+                    .setNegativeButton("Ok") { dialog, _ ->
+                        dialog.dismiss()
+                    }
+                val alert = builder.create()
+                alert.show()
+            } else {
+                onBackPressed()
+            }
         }
 
         val btnDeleteAll: Button = findViewById(R.id.btnDeleteAll)
@@ -55,7 +65,7 @@ class InfoAudioActivity : AppCompatActivity() {
 
         if (!UtilNetwork.isNetworkAvailable(this)) {
             val builder = AlertDialog.Builder(this)
-            builder.setMessage("No internet connection. Please restore the connection and press 'Go Back' to use the app.")
+            builder.setMessage("No internet connection. Here you can see your uploads and play the audios. Please restore the connection and press 'Go Back' to use the app.")
                 .setNegativeButton("Ok") { dialog, _ ->
                     dialog.dismiss()
                 }
@@ -66,7 +76,7 @@ class InfoAudioActivity : AppCompatActivity() {
 
     private fun deleteAllFromDb() {
         val builder = AlertDialog.Builder(this)
-        builder.setMessage("Are you sure you want to delete all files from this Db?")
+        builder.setMessage("Are you sure you want to delete all files from this Db? You won't be able to bring them back.")
             .setPositiveButton("Yes") { dialog, _ ->
                 lifecycleScope.launch {
                     withContext(Dispatchers.IO) {
