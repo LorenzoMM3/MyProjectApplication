@@ -16,6 +16,7 @@ class LogActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_log)
+        UtilNetwork.checkConnection(this)
 
         val btnLogin: Button = findViewById(R.id.btnLogin)
         val btnRegistration: Button = findViewById(R.id.btnRegister)
@@ -23,6 +24,7 @@ class LogActivity : AppCompatActivity() {
         val password: EditText = findViewById(R.id.edPassword2)
 
         btnLogin.setOnClickListener {
+            UtilNetwork.checkConnection(this)
             val intent = Intent(this, MainActivity::class.java)
             val stringUser: String = username.text.toString().trim()
             val stringPsw: String = password.text.toString().trim()
@@ -39,10 +41,6 @@ class LogActivity : AppCompatActivity() {
             apiService.getToken(stringUser, stringPsw).enqueue(object : Callback<TokenResponse> {
                 override fun onResponse(call: Call<TokenResponse>, response: Response<TokenResponse>) {
                     if (response.isSuccessful) {
-                        val responseBody = response.body()
-                        Log.d("LogActivity", "Full response: ${response.toString()}")
-                        Log.d("LogActivity", "Response Body: ${responseBody?.toString()}")
-
                         val tokenResponse = response.body()
                         if (tokenResponse != null) {
                             val clientId = tokenResponse.client_id
@@ -54,7 +52,7 @@ class LogActivity : AppCompatActivity() {
                             finish()
                         }
                     } else {
-                        Toast.makeText(this@LogActivity, "Incorrect credentials", Toast.LENGTH_LONG).show()
+                        Toast.makeText(this@LogActivity, "Error: ${response.errorBody()?.string()}", Toast.LENGTH_LONG).show()
                     }
                 }
 

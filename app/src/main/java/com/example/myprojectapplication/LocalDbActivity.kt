@@ -1,5 +1,6 @@
 package com.example.myprojectapplication
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.Toast
@@ -45,6 +46,7 @@ class LocalDbActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_local_db)
+        UtilNetwork.checkConnection(this)
 
         username = intent.getStringExtra("username")!!
         clientToken = intent.getStringExtra("clientToken")!!

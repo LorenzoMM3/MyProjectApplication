@@ -36,6 +36,7 @@ class MapFragment : Fragment() {
         arguments?.let {
             token = it.getString(ARG_TOKEN)
         }
+        UtilNetwork.checkConnection(requireContext())
         Configuration.getInstance().load(requireContext(), requireActivity().getPreferences(android.content.Context.MODE_PRIVATE))
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
     }
@@ -93,8 +94,14 @@ class MapFragment : Fragment() {
                         displayAllUploads(it, token)
                     }
                 } else {
-                    Toast.makeText(context, "Error Fetch: ${response.errorBody()?.string()}", Toast.LENGTH_SHORT).show()
-                    Toast.makeText(context, "Token: ${token}", Toast.LENGTH_SHORT).show()
+                    val errorMessage: String = when (response.code()) {
+                        401 -> {
+                            utilLogin.forceLogin(requireContext())
+                            "User is not authenticated"
+                        }
+                        else -> "Error: ${response.errorBody()?.string()}"
+                    }
+                    Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
                 }
             }
             override fun onFailure(call: Call<List<ResponseAllUploads>>, t: Throwable) {

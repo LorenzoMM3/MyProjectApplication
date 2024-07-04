@@ -67,6 +67,7 @@ class RecordFragment : Fragment() {
             token = it.getString(ARG_TOKEN)
             username = it.getString(ARG_USERNAME)
         }
+        UtilNetwork.checkConnection(requireContext())
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
         database = UploadDataApp.getDatabase(requireContext())
     }
@@ -116,6 +117,7 @@ class RecordFragment : Fragment() {
     }
 
     private fun startRecording() {
+        UtilNetwork.checkConnection(requireContext())
         if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.RECORD_AUDIO), REQUEST_RECORD_AUDIO_PERMISSION)
             return

@@ -55,6 +55,7 @@ class MyUploadsFragment : Fragment() {
             token = it.getString(ARG_TOKEN)
             username = it.getString(ARG_USERNAME)
         }
+        UtilNetwork.checkConnection(requireContext())
     }
 
     override fun onCreateView(

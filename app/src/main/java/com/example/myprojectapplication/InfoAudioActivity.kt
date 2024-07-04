@@ -1,5 +1,6 @@
 package com.example.myprojectapplication
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.Toast
@@ -50,6 +51,16 @@ class InfoAudioActivity : AppCompatActivity() {
         val btnDeleteAll: Button = findViewById(R.id.btnDeleteAll)
         btnDeleteAll.setOnClickListener {
             deleteAllFromDb()
+        }
+
+        if (!UtilNetwork.isNetworkAvailable(this)) {
+            val builder = AlertDialog.Builder(this)
+            builder.setMessage("No internet connection. Please restore the connection and press 'Go Back' to use the app.")
+                .setNegativeButton("Ok") { dialog, _ ->
+                    dialog.dismiss()
+                }
+            val alert = builder.create()
+            alert.show()
         }
     }
 

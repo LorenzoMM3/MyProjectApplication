@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import com.example.myprojectapplication.UtilNetwork.checkConnection
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -15,7 +16,7 @@ class RegActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_reg)
-
+        checkConnection(this)
 
         val btnRegister2: Button = findViewById(R.id.btnRegister2)
         val btnLogin2: Button = findViewById(R.id.btnLogin2)
@@ -23,6 +24,7 @@ class RegActivity : AppCompatActivity() {
         val password: EditText = findViewById(R.id.edPassword2)
 
         btnRegister2.setOnClickListener {
+            checkConnection(this)
             val intent = Intent(this, LogActivity::class.java)
             val stringUser: String = username.text.toString().trim()
             val stringPsw: String = password.text.toString().trim()
@@ -41,7 +43,11 @@ class RegActivity : AppCompatActivity() {
                         Toast.makeText(this@RegActivity, "User signed up: ${signUpResponse?.username}", Toast.LENGTH_LONG).show()
                         startActivity(intent)
                     } else {
-                        Toast.makeText(this@RegActivity, "Sign up failed", Toast.LENGTH_LONG).show()
+                        val errorMessage: String = when (response.code()) {
+                            400 -> "Username already registered"
+                            else -> "Error: ${response.errorBody()?.string()}"
+                        }
+                        Toast.makeText(this@RegActivity, errorMessage, Toast.LENGTH_SHORT).show()
                     }
                 }
 

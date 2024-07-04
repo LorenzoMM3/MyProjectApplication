@@ -23,6 +23,7 @@ class MyAccountActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_my_account)
+        UtilNetwork.checkConnection(this)
 
         val btnGoBack: Button = findViewById(R.id.btnBack1ma)
         val btnDeleteAccount: Button = findViewById(R.id.btnDeleteAccount)
