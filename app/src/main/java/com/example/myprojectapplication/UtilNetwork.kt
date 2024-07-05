@@ -16,7 +16,7 @@ object UtilNetwork {
     }
 
     fun checkConnection(context: Context){
-        if (!UtilNetwork.isNetworkAvailable(context)) {
+        if (!isNetworkAvailable(context)) {
             Toast.makeText(context, "No internet connection. Redirecting to InfoAudio Database.", Toast.LENGTH_LONG).show()
             val intent = Intent(context, InfoAudioActivity::class.java)
             context.startActivity(intent)

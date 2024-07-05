@@ -5,21 +5,22 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [UploadData::class], version = 1, exportSchema = false)
-abstract class UploadDataApp : RoomDatabase() {
+@Database(entities = [InfoAudio::class, UploadData::class], version = 1)
+abstract class AppDatabase : RoomDatabase() {
 
+    abstract fun infoAudioDao(): InfoAudioDao
     abstract fun uploadDataDao(): UploadDataDao
 
     companion object {
         @Volatile
-        private var INSTANCE: UploadDataApp? = null
+        private var INSTANCE: AppDatabase? = null
 
-        fun getDatabase(context: Context): UploadDataApp {
+        fun getDatabase(context: Context): AppDatabase {
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
-                    UploadDataApp::class.java,
-                    "upload_data_app"
+                    AppDatabase::class.java,
+                    "database"
                 ).build()
                 INSTANCE = instance
                 instance

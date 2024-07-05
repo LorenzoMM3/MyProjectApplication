@@ -13,8 +13,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import com.example.myprojectapplication.database.InfoAudioApp
-import com.example.myprojectapplication.database.UploadDataApp
+import com.example.myprojectapplication.database.AppDatabase
 import com.example.myprojectapplication.database.UploadDataRepository
 import com.example.myprojectapplication.database.UploadDataViewModel
 import com.example.myprojectapplication.database.UploadDataViewModelFactory
@@ -38,13 +37,13 @@ class MyUploadsFragment : Fragment() {
     private lateinit var btnInfoAudio: Button
 
     private val uploadDataViewModel: UploadDataViewModel by viewModels {
-        val dao = UploadDataApp.getDatabase(requireContext()).uploadDataDao()
+        val dao = AppDatabase.getDatabase(requireContext()).uploadDataDao()
         val repository = UploadDataRepository(dao)
         UploadDataViewModelFactory(repository)
     }
 
     private val infoAudioViewModel: InfoAudioViewModel by viewModels {
-        val dao = InfoAudioApp.getDatabase(requireContext()).infoAudioDao()
+        val dao = AppDatabase.getDatabase(requireContext()).infoAudioDao()
         val repository = InfoAudioRepository(dao)
         InfoAudioViewModelFactory(repository)
     }
@@ -152,8 +151,6 @@ class MyUploadsFragment : Fragment() {
                 if (response.isSuccessful) {
                     Toast.makeText(context, "Song deleted successfully!", Toast.LENGTH_SHORT).show()
                     if(response.code()==200){
-                        deleteFromUploadData(username!!, latitude, longitude)
-                        Toast.makeText(context, "Deleted from Upload Data", Toast.LENGTH_SHORT).show()
                         deleteFromInfoAudio(latitude, longitude)
                         Toast.makeText(context, "Deleted from Info Audio", Toast.LENGTH_SHORT).show()
                     }

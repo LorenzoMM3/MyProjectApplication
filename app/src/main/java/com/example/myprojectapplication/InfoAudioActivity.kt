@@ -14,7 +14,7 @@ import com.example.myprojectapplication.database.InfoAudioAdapter
 import com.example.myprojectapplication.viewmodel.InfoAudioViewModel
 import com.example.myprojectapplication.viewmodel.InfoAudioViewModelFactory
 import com.example.myprojectapplication.repository.InfoAudioRepository
-import com.example.myprojectapplication.database.InfoAudioApp
+import com.example.myprojectapplication.database.AppDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -24,7 +24,7 @@ class InfoAudioActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: InfoAudioAdapter
     private val infoAudioViewModel: InfoAudioViewModel by viewModels {
-        val dao = InfoAudioApp.getDatabase(application).infoAudioDao()
+        val dao = AppDatabase.getDatabase(application).infoAudioDao()
         val repository = InfoAudioRepository(dao)
         InfoAudioViewModelFactory(repository)
     }
@@ -80,7 +80,7 @@ class InfoAudioActivity : AppCompatActivity() {
             .setPositiveButton("Yes") { dialog, _ ->
                 lifecycleScope.launch {
                     withContext(Dispatchers.IO) {
-                        val db = InfoAudioApp.getDatabase(this@InfoAudioActivity)
+                        val db = AppDatabase.getDatabase(this@InfoAudioActivity)
                         db.infoAudioDao().deleteAll()
                     }
                     withContext(Dispatchers.Main) {

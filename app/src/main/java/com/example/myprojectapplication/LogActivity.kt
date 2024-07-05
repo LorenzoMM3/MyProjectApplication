@@ -1,9 +1,7 @@
 package com.example.myprojectapplication
 
 import android.content.Intent
-import android.content.IntentFilter
 import android.content.pm.PackageManager
-import android.net.ConnectivityManager
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -12,34 +10,31 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.example.myprojectapplication.notification.NetworkChangeReceiver
-import com.example.myprojectapplication.notification.NotificationHelper
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import android.Manifest
+import android.content.IntentFilter
+import android.net.ConnectivityManager
+import com.example.myprojectapplication.notification.NetworkChangeReceiver
+import com.example.myprojectapplication.notification.NotificationService
 
 class LogActivity : AppCompatActivity() {
 
-    private lateinit var networkChangeReceiver: NetworkChangeReceiver
     private val REQUEST_CODE_POST_NOTIFICATIONS = 1
+    private lateinit var networkChangeReceiver: NetworkChangeReceiver
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_log)
         UtilNetwork.checkConnection(this)
+        startService(Intent(this, NotificationService::class.java))
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.POST_NOTIFICATIONS), REQUEST_CODE_POST_NOTIFICATIONS)
             }
         }
-
-        networkChangeReceiver = NetworkChangeReceiver()
-            val intentFilter = IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
-            registerReceiver(networkChangeReceiver, intentFilter)
-
-        NotificationHelper.createNotificationChannel(this)
 
         val btnLogin: Button = findViewById(R.id.btnLogin)
         val btnRegistration: Button = findViewById(R.id.btnRegister)

@@ -1,6 +1,5 @@
 package com.example.myprojectapplication
 
-import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.Toast
@@ -11,11 +10,11 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.myprojectapplication.UtilNetwork.isWifiConnected
 import com.example.myprojectapplication.database.InfoAudio
-import com.example.myprojectapplication.database.InfoAudioApp
+import com.example.myprojectapplication.database.AppDatabase
 import com.example.myprojectapplication.database.UploadData
 import com.example.myprojectapplication.database.UploadDataAdapter
-import com.example.myprojectapplication.database.UploadDataApp
 import com.example.myprojectapplication.database.UploadDataRepository
 import com.example.myprojectapplication.database.UploadDataViewModel
 import com.example.myprojectapplication.database.UploadDataViewModelFactory
@@ -38,7 +37,7 @@ class LocalDbActivity : AppCompatActivity() {
     private lateinit var btnDeleteAll: Button
     private lateinit var adapter: UploadDataAdapter
     private val uploadDataViewModel: UploadDataViewModel by viewModels {
-        val dao = UploadDataApp.getDatabase(application).uploadDataDao()
+        val dao = AppDatabase.getDatabase(application).uploadDataDao()
         val repository = UploadDataRepository(dao)
         UploadDataViewModelFactory(repository)
     }
@@ -73,7 +72,21 @@ class LocalDbActivity : AppCompatActivity() {
 
         val btnUpload: Button = findViewById(R.id.btnUpload)
         btnUpload.setOnClickListener {
-            uploadAllFiles(clientToken)
+            if(isWifiConnected(this)){
+                uploadAllFiles(clientToken)
+            } else {
+                val builder = AlertDialog.Builder(this)
+                builder.setMessage("You don't have a Wifi Connection. Do you want to upload all files from this Db using your mobile data?")
+                    .setPositiveButton("Yes") { dialog, _ ->
+                        uploadAllFiles(clientToken)
+                    }
+                    .setNegativeButton("No") { dialog, _ ->
+                        dialog.dismiss()
+                    }
+                val alert = builder.create()
+                alert.show()
+            }
+
         }
     }
 
@@ -83,7 +96,7 @@ class LocalDbActivity : AppCompatActivity() {
             .setPositiveButton("Yes") { dialog, _ ->
                 lifecycleScope.launch {
                     withContext(Dispatchers.IO) {
-                        val db = UploadDataApp.getDatabase(this@LocalDbActivity)
+                        val db = AppDatabase.getDatabase(this@LocalDbActivity)
                         db.uploadDataDao().deleteAll()
                     }
                     withContext(Dispatchers.Main) {
@@ -103,7 +116,7 @@ class LocalDbActivity : AppCompatActivity() {
         builder.setMessage("Do you want to upload all files from this Db?")
             .setPositiveButton("Yes") { dialog, _ ->
                 lifecycleScope.launch {
-                    val db = UploadDataApp.getDatabase(this@LocalDbActivity)
+                    val db = AppDatabase.getDatabase(this@LocalDbActivity)
                     val uploadDataList = withContext(Dispatchers.IO) {
                         db.uploadDataDao().getAllUploadDataBlocking()
                     }
@@ -167,7 +180,7 @@ class LocalDbActivity : AppCompatActivity() {
     private fun deleteUploadDataFromDb(uploadData: UploadData) {
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
-                val db = UploadDataApp.getDatabase(this@LocalDbActivity)
+                val db = AppDatabase.getDatabase(this@LocalDbActivity)
                 db.uploadDataDao().delete(uploadData.username, uploadData.latitude, uploadData.longitude)
             }
         }
@@ -205,7 +218,7 @@ class LocalDbActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
-                val db = InfoAudioApp.getDatabase(this@LocalDbActivity)
+                val db = AppDatabase.getDatabase(this@LocalDbActivity)
                 db.infoAudioDao().insert(infoAudio)
             }
         }

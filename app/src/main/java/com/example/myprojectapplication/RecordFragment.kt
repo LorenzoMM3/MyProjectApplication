@@ -20,7 +20,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
-import com.example.myprojectapplication.database.UploadDataApp
+import com.example.myprojectapplication.database.AppDatabase
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import okhttp3.MediaType
@@ -34,12 +34,10 @@ import java.io.IOException
 import androidx.lifecycle.lifecycleScope
 import com.example.myprojectapplication.UtilNetwork.isWifiConnected
 import com.example.myprojectapplication.database.InfoAudio
-import com.example.myprojectapplication.database.InfoAudioApp
 import com.example.myprojectapplication.database.UploadData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import retrofit2.http.Body
 
 private const val ARG_TOKEN = "token"
 private const val ARG_USERNAME = "username"
@@ -61,7 +59,7 @@ class RecordFragment : Fragment() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var recorder: MediaRecorder? = null
     private var mediaPlayer: MediaPlayer? = null
-    private lateinit var database: UploadDataApp
+    private lateinit var database: AppDatabase
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,7 +69,7 @@ class RecordFragment : Fragment() {
         }
         UtilNetwork.checkConnection(requireContext())
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
-        database = UploadDataApp.getDatabase(requireContext())
+        database = AppDatabase.getDatabase(requireContext())
     }
 
     override fun onCreateView(
@@ -352,7 +350,7 @@ class RecordFragment : Fragment() {
 
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
-                val db = InfoAudioApp.getDatabase(requireContext())
+                val db = AppDatabase.getDatabase(requireContext())
                 db.infoAudioDao().insert(infoAudio)
             }
         }
