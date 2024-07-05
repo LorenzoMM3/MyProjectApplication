@@ -33,7 +33,7 @@ class NetworkChangeReceiver : BroadcastReceiver() {
         val notificationBuilder = NotificationCompat.Builder(context, channelId)
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentTitle("Network Change")
-            .setContentText("WiFi is now connected. Please check the app.")
+            .setContentText("WiFi is now connected. Check the audios ready for the upload.")
             .setPriority(NotificationCompat.PRIORITY_HIGH)
 
         with(NotificationManagerCompat.from(context)) {
