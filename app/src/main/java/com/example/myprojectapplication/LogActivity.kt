@@ -23,12 +23,12 @@ class LogActivity : AppCompatActivity() {
 
     private val REQUEST_CODE_POST_NOTIFICATIONS = 1
     private lateinit var networkChangeReceiver: NetworkChangeReceiver
+    private lateinit var clientToken:String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_log)
         UtilNetwork.checkConnection(this)
-        startService(Intent(this, NotificationService::class.java))
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
@@ -62,9 +62,9 @@ class LogActivity : AppCompatActivity() {
                         val tokenResponse = response.body()
                         if (tokenResponse != null) {
                             val clientId = tokenResponse.client_id
-                            val clientSecret = tokenResponse.client_secret
+                            clientToken = tokenResponse.client_secret
                             intent.putExtra("clientId", clientId)
-                            intent.putExtra("clientToken", clientSecret)
+                            intent.putExtra("clientToken", clientToken)
                             Toast.makeText(this@LogActivity, "Successful Login", Toast.LENGTH_LONG).show()
                             startActivity(intent)
                             finish()
@@ -86,17 +86,6 @@ class LogActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-    }
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == REQUEST_CODE_POST_NOTIFICATIONS) {
-            if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                networkChangeReceiver = NetworkChangeReceiver()
-                val intentFilter = IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
-                registerReceiver(networkChangeReceiver, intentFilter)
-            }
-        }
     }
 
 }

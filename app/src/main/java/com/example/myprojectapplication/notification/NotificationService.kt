@@ -9,12 +9,16 @@ import android.os.IBinder
 class NotificationService: Service() {
 
     private lateinit var networkChangeReceiver: NetworkChangeReceiver
+    private var clientToken: String = ""
 
-    override fun onCreate() {
-        super.onCreate()
-        networkChangeReceiver = NetworkChangeReceiver()
-        val intentFilter = IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
-        registerReceiver(networkChangeReceiver, intentFilter)
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        if(intent != null){
+            clientToken = intent.getStringExtra("clientToken")!!
+            networkChangeReceiver = NetworkChangeReceiver(clientToken)
+            val intentFilter = IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
+            registerReceiver(networkChangeReceiver, intentFilter)
+        }
+        return super.onStartCommand(intent, flags, startId)
     }
 
     override fun onDestroy() {

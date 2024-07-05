@@ -11,6 +11,7 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.example.myprojectapplication.notification.NetworkChangeReceiver
+import com.example.myprojectapplication.notification.NotificationService
 
 class MainActivity : AppCompatActivity() {
 
@@ -34,6 +35,10 @@ class MainActivity : AppCompatActivity() {
 
         val welcomeMsgString = welcomeMsg.text.toString()
         welcomeMsg.text = welcomeMsgString + username
+
+        val service = Intent(this, NotificationService::class.java)
+        service.putExtra("clientToken", clientToken)
+        startService(service)
 
         replaceFragment(RecordFragment.newInstance(clientToken ?: "", username ?: ""))
 

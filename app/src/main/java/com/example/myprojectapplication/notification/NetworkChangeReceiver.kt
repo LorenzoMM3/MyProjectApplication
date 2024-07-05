@@ -29,12 +29,20 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.io.File
 
-class NetworkChangeReceiver : BroadcastReceiver() {
+class NetworkChangeReceiver(private val token: String) : BroadcastReceiver() {
+
+    private var lastTime = 0L
+    private var interval = 3000L
 
     override fun onReceive(context: Context, intent: Intent) {
         if (intent.action == ConnectivityManager.CONNECTIVITY_ACTION) {
+            val currentTime = System.currentTimeMillis()
+            if (currentTime - lastTime < interval){
+                return
+            }
+            lastTime = currentTime
             if (isWifiConnected(context)) {
-                CoroutineScope(Dispatchers.Main).launch {
+                CoroutineScope(Dispatchers.IO).launch {
                     checkUploadDataAndNotify(context)
                 }
             }
@@ -55,6 +63,7 @@ class NetworkChangeReceiver : BroadcastReceiver() {
         val uploadDataExists = withContext(Dispatchers.IO) {
             uploadDataDao.getAllUploadDataBlocking().isNotEmpty()
         }
+        // AGGIUNGERE CONTROLLO DEL TOKEN
         if (uploadDataExists) {
             withContext(Dispatchers.IO) {
                 uploadFromDb(context)
@@ -63,18 +72,17 @@ class NetworkChangeReceiver : BroadcastReceiver() {
     }
 
     private fun uploadFromDb(context: Context){
-        val token = " "
         CoroutineScope(Dispatchers.IO).launch {
             val db = AppDatabase.getDatabase(context)
             val uploadDataList = db.uploadDataDao().getAllUploadDataBlocking()
             uploadDataList.forEach { uploadData ->
-                uploadFile(context, token, uploadData)
+                uploadFile(context, uploadData)
             }
         }
         sendNotification(context)
     }
 
-    private fun uploadFile(context: Context, token: String, uploadData: UploadData) {
+    private fun uploadFile(context: Context, uploadData: UploadData) {
         val recordingFilePath = "${context.filesDir.absolutePath}/${uploadData.username}_${uploadData.latitude}_${uploadData.longitude}.mp3"
         val file = File(recordingFilePath)
         if (file.exists()) {
