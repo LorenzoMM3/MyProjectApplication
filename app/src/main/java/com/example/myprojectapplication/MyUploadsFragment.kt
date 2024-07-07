@@ -131,7 +131,7 @@ class MyUploadsFragment : Fragment() {
                             context?.let { forceLogin(it) }
                             "User is not authenticated"
                         }
-                        else -> "Fetch All Error: ${response.errorBody()?.string()}"
+                        else -> "Error: ${response.errorBody()?.string()}"
                     }
                     Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
                 }
@@ -188,8 +188,7 @@ class MyUploadsFragment : Fragment() {
                             "User is not authenticated"
                         }
                         404 -> "Audio not found"
-                        400 -> "You are not authorized to do this audio"
-                        else -> "Delete Error: ${response.errorBody()?.string()}"
+                        else -> "Error: ${response.errorBody()?.string()}"
                     }
                     Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
                 }
@@ -215,8 +214,7 @@ class MyUploadsFragment : Fragment() {
                             "User is not authenticated"
                         }
                         404 -> "Audio not found"
-                        400 -> "You are not authorized to do this audio"
-                        else -> "Delete Error: ${response.errorBody()?.string()}"
+                        else -> "Error: ${response.errorBody()?.string()}"
                     }
                     Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
                 }
@@ -366,10 +364,6 @@ class MyUploadsFragment : Fragment() {
 
             uploadsContainer2.addView(layout)
         }
-    }
-
-    private fun deleteFromUploadData(username: String, latitude: Double, longitude: Double){
-        uploadDataViewModel.delete(username, latitude, longitude)
     }
 
     private fun deleteFromInfoAudio(latitude: Double, longitude: Double){

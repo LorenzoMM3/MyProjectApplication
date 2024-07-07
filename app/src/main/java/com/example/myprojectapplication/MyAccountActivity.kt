@@ -75,7 +75,7 @@ class MyAccountActivity : AppCompatActivity() {
                             UtilLogin.forceLogin(this@MyAccountActivity)
                             "User is not authenticated"
                         }
-                        else -> "Fetch My Error: ${response.errorBody()?.string()}"
+                        else -> "Error: ${response.errorBody()?.string()}"
                     }
                     Toast.makeText(this@MyAccountActivity, errorMessage, Toast.LENGTH_SHORT).show()
                 }

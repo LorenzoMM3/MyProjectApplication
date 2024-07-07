@@ -142,7 +142,7 @@ class RecordFragment : Fragment() {
                 }
             }
         } else {
-            addResponseToContainer("Error: impossible to continue - latitude: $latitude - longitude: $longitude - username: $username - ")
+            addResponseToContainer("Error: impossible to continue: latitude, longitude, and username can't be null -> latitude: $latitude, longitude: $longitude, username: $username")
         }
     }
 
@@ -286,7 +286,7 @@ class RecordFragment : Fragment() {
                         }
                         413 -> "File is too big."
                         415 -> "File is not a supported audio file."
-                        else -> "Unknown error."
+                        else -> response.errorBody()?.string()
                     }
                     addResponseToContainer("Error: $responseText")
                 }
