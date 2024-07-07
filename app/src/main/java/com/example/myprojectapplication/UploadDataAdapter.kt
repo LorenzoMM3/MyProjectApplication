@@ -1,5 +1,6 @@
 package com.example.myprojectapplication.database
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,11 +21,12 @@ class UploadDataAdapter(private var dataList: List<UploadData>) : RecyclerView.A
         return UserLocationViewHolder(itemView)
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: UserLocationViewHolder, position: Int) {
         val currentItem = dataList[position]
-        holder.username.text = currentItem.username
-        holder.latitude.text = currentItem.latitude.toString()
-        holder.longitude.text = currentItem.longitude.toString()
+        holder.username.text = "Username: ${currentItem.username}"
+        holder.latitude.text = "Latitude: ${currentItem.latitude}"
+        holder.longitude.text = "Longitude: ${currentItem.longitude}"
     }
 
     override fun getItemCount() = dataList.size

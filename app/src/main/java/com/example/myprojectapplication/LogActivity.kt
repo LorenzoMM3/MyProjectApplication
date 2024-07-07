@@ -70,7 +70,11 @@ class LogActivity : AppCompatActivity() {
                             finish()
                         }
                     } else {
-                        Toast.makeText(this@LogActivity, "Error: ${response.errorBody()?.string()}", Toast.LENGTH_LONG).show()
+                        val errorMessage: String = when (response.code()) {
+                            400 -> "Incorrect username or password"
+                            else -> "Error: ${response.errorBody()?.string()}"
+                        }
+                        Toast.makeText(this@LogActivity, errorMessage, Toast.LENGTH_SHORT).show()
                     }
                 }
 
