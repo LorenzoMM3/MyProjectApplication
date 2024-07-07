@@ -52,12 +52,13 @@ class MapFragment : Fragment() {
         return view
     }
 
-    fun checkLocationPermission() {
+    private fun checkLocationPermission() {
         if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION), 1)
         } else {
             getLastKnownLocation()
             fetchAllUploads(token.toString())
+            fetchMyUploads(token.toString())
         }
     }
 
@@ -96,7 +97,7 @@ class MapFragment : Fragment() {
                 } else {
                     val errorMessage: String = when (response.code()) {
                         401 -> {
-                            UtilLogin.forceLogin(requireContext())
+                            utilLogin.forceLogin(requireContext())
                             "User is not authenticated"
                         }
                         else -> "Error: ${response.errorBody()?.string()}"
@@ -110,9 +111,37 @@ class MapFragment : Fragment() {
         })
     }
 
+    private fun fetchMyUploads(token: String) {
+        val apiService = ApiClient.instance.create(ApiService::class.java)
+        val call = apiService.seeMyUploads("Bearer $token")
+
+        call.enqueue(object : Callback<List<ResponseMyUploads>> {
+            override fun onResponse(call: Call<List<ResponseMyUploads>>, response: Response<List<ResponseMyUploads>>) {
+                if (response.isSuccessful) {
+                    val uploads = response.body()
+                    uploads?.let {
+                        displayMyUploads(it, token)
+                    }
+                } else {
+                    val errorMessage: String = when (response.code()) {
+                        401 -> {
+                            utilLogin.forceLogin(requireContext())
+                            "User is not authenticated"
+                        }
+                        else -> "Error: ${response.errorBody()?.string()}"
+                    }
+                    Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+                }
+            }
+            override fun onFailure(call: Call<List<ResponseMyUploads>>, t: Throwable) {
+                Toast.makeText(context, "Fetch Error: ${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
     private fun displayAllUploads(uploads: List<ResponseAllUploads>, token: String) {
         uploads.forEach { upload ->
-            val uploadLocation = GeoPoint(upload.latitude.toDouble(), upload.longitude.toDouble())
+            val uploadLocation = GeoPoint(upload.latitude, upload.longitude)
             val marker = Marker(mapView)
             marker.position = uploadLocation
             marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
@@ -121,7 +150,32 @@ class MapFragment : Fragment() {
             val icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_location_file) as VectorDrawable
             marker.icon = icon
 
-            marker.setOnMarkerClickListener { marker, mapView ->
+            marker.setOnMarkerClickListener { _, _ ->
+                val intent = Intent(context, MoreInfoActivity::class.java).apply {
+                    putExtra("uploadId", upload.id)
+                    putExtra("token", token)
+                }
+                startActivity(intent)
+                true
+            }
+
+            mapView.overlays.add(marker)
+            Log.d("MapFragment", "Marker added at: ${upload.latitude}, ${upload.longitude}")
+        }
+    }
+
+    private fun displayMyUploads(uploads: List<ResponseMyUploads>, token: String) {
+        uploads.forEach { upload ->
+            val uploadLocation = GeoPoint(upload.latitude, upload.longitude)
+            val marker = Marker(mapView)
+            marker.position = uploadLocation
+            marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+            marker.title = "ID: ${upload.id}"
+
+            val icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_location_file2) as VectorDrawable
+            marker.icon = icon
+
+            marker.setOnMarkerClickListener { _, _ ->
                 val intent = Intent(context, MoreInfoActivity::class.java).apply {
                     putExtra("uploadId", upload.id)
                     putExtra("token", token)

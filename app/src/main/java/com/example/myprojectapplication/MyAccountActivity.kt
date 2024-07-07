@@ -72,7 +72,7 @@ class MyAccountActivity : AppCompatActivity() {
                 } else {
                     val errorMessage: String = when (response.code()) {
                         401 -> {
-                            UtilLogin.forceLogin(this@MyAccountActivity)
+                            utilLogin.forceLogin(this@MyAccountActivity)
                             "User is not authenticated"
                         }
                         else -> "Error: ${response.errorBody()?.string()}"

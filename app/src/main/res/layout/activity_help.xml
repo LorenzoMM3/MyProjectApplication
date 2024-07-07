@@ -39,18 +39,6 @@
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/textView3h"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:fontFamily="@font/average"
-                android:text="Here you will find some helpful info"
-                android:textAlignment="center"
-                android:textColor="@color/black"
-                android:textSize="20sp"
-                android:textStyle="bold" />
-
             <Button
                 android:id="@+id/btnBack1h"
                 android:layout_width="match_parent"
@@ -255,7 +243,7 @@
                 android:layout_marginHorizontal="20dp"
                 android:layout_marginVertical="10dp"
                 android:fontFamily="@font/average"
-                android:text="Display Songs on Map: The app displays all songs uploaded by users on a map using an API (Main Menu -> City Map)."
+                android:text="Display Songs on Map: The app displays all songs uploaded by users on a map using an API (Main Menu -> City Map). All audios are displayed in red, your audios are displayed in blue."
                 android:textAlignment="viewStart"
                 android:textColor="@color/black"
                 android:textSize="20sp"

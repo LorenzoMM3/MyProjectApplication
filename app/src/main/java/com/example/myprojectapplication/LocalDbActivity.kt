@@ -167,7 +167,7 @@ class LocalDbActivity : AppCompatActivity() {
     private fun handleUploadError(code: Int) {
         val responseText = when (code) {
             401 -> {
-                this@LocalDbActivity.let { UtilLogin.forceLogin(it) }
+                this@LocalDbActivity.let { utilLogin.forceLogin(it) }
                 "User is not authenticated."
             }
             413 -> "File is too big."
