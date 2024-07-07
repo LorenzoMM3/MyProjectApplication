@@ -281,7 +281,7 @@ class RecordFragment : Fragment() {
                 } else {
                     val responseText = when (response.code()) {
                         401 -> {
-                            requireContext().let { utilLogin.forceLogin(it) }
+                            requireContext().let { UtilLogin.forceLogin(it) }
                             "User is not authenticated."
                         }
                         413 -> "File is too big."

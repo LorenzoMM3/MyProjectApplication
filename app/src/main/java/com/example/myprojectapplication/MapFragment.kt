@@ -96,7 +96,7 @@ class MapFragment : Fragment() {
                 } else {
                     val errorMessage: String = when (response.code()) {
                         401 -> {
-                            utilLogin.forceLogin(requireContext())
+                            UtilLogin.forceLogin(requireContext())
                             "User is not authenticated"
                         }
                         else -> "Error: ${response.errorBody()?.string()}"

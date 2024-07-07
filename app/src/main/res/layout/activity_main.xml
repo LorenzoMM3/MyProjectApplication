@@ -48,7 +48,7 @@
             android:fontFamily="@font/arimo"
             android:letterSpacing="0.6"
             android:paddingTop="5dp"
-            android:text="Your City Listenin' to"
+            android:text="Your City is Listening to"
             android:textAlignment="center"
             android:textAllCaps="false"
             android:textColor="@color/white"
@@ -63,7 +63,7 @@
             android:layout_marginTop="2dp"
             android:layout_marginBottom="5dp"
             android:paddingTop="7dp"
-            android:text="Welcome back,  "
+            android:text="Welcome, "
             android:textAlignment="center"
             android:textColor="@color/white" />
     </LinearLayout>

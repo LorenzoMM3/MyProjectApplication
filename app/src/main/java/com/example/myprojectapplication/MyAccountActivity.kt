@@ -31,7 +31,6 @@ class MyAccountActivity : AppCompatActivity() {
         val textViewPsw: TextView = findViewById(R.id.textView3ma)
         val textViewTotUploads: TextView = findViewById(R.id.textView5ma)
         val textViewClientId: TextView = findViewById(R.id.textView6ma)
-        val textViewToken: TextView = findViewById(R.id.textView6ma2)
         val username = intent.getStringExtra("username")
         val password = intent.getStringExtra("password")
         val clientId = intent.getIntExtra("clientId", -1)
@@ -45,7 +44,6 @@ class MyAccountActivity : AppCompatActivity() {
             }
         })
         textViewClientId.text = "Client ID: $clientId"
-        textViewToken.text = "Client Token: $clientToken"
 
         btnGoBack.setOnClickListener {
             val intent = Intent(this, MainActivity::class.java)
@@ -74,7 +72,7 @@ class MyAccountActivity : AppCompatActivity() {
                 } else {
                     val errorMessage: String = when (response.code()) {
                         401 -> {
-                            utilLogin.forceLogin(this@MyAccountActivity)
+                            UtilLogin.forceLogin(this@MyAccountActivity)
                             "User is not authenticated"
                         }
                         else -> "Fetch My Error: ${response.errorBody()?.string()}"
