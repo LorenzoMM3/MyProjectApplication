@@ -18,7 +18,7 @@ data class SignUpRequest(val username: String, val password: String)
 data class SignUpResponse(val username: String, val id: Int)
 data class TokenResponse(val client_id: Int, val client_secret: String)
 data class DeleteResponse(val detail: String)
-data class ResponseMyUploads(val id: Int, val longitude: Double, val latitude: Double,  val hidden: Boolean, val uploaded: Boolean)
+data class ResponseMyUploads(val id: Int, val longitude: Double, val latitude: Double,  val hidden: Boolean)
 data class ResponseAllUploads(val id: Int, val longitude: Double, val latitude: Double)
 data class ResponseMoreInfo(val longitude: Double, val latitude: Double, val id: Int, val creator_id: Int, val creator_username: String, val tags: Tags)
 data class Tags(val bpm: Int, val danceability: Double, val loudness: Double, val mood: Map<String, Double>,val genre: Map<String, Double>, val instrument: Map<String, Double>)
@@ -36,12 +36,6 @@ data class ResponseUpload(
     val genre: Map<String, Double>?,
     val instrument: Map<String, Double>?,
 )
-
-{    fun toSingleString(): String {
-        return "detail: $detail, longitude: $longitude, latitude: $latitude, bpm: $bpm, danceability: $danceability, loudness: $loudness, mood: $mood, genre: $genre, instrument: $instrument"
-    }
-}
-
 
 interface ApiService {
     @POST("auth")

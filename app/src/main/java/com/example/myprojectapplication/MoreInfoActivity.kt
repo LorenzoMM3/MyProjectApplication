@@ -1,6 +1,5 @@
 package com.example.myprojectapplication
 
-import android.content.Intent
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.widget.Button
@@ -13,7 +12,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
-import java.io.IOException
 
 class MoreInfoActivity : AppCompatActivity() {
 
@@ -72,12 +70,10 @@ class MoreInfoActivity : AppCompatActivity() {
                 val response = withContext(Dispatchers.IO) {
                     apiService.seeMoreInfo(authHeader, uploadId).execute()
                 }
-
                 if (response.isSuccessful) {
                     response.body()?.let { moreInfo ->
                         displayMoreInfo(moreInfo)
                     }
-                    Toast.makeText(this@MoreInfoActivity, "$audioFilePath", Toast.LENGTH_LONG).show()
                 } else {
                     val errorBody = response.errorBody()?.string()
                     Toast.makeText(this@MoreInfoActivity, "Failed to fetch info: ${response.code()} - $errorBody", Toast.LENGTH_SHORT).show()

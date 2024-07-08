@@ -63,7 +63,6 @@ class NetworkChangeReceiver(private val token: String) : BroadcastReceiver() {
         val uploadDataExists = withContext(Dispatchers.IO) {
             uploadDataDao.getAllUploadDataBlocking().isNotEmpty()
         }
-        // AGGIUNGERE CONTROLLO DEL TOKEN
         if (uploadDataExists) {
             withContext(Dispatchers.IO) {
                 uploadFromDb(context)
@@ -99,16 +98,16 @@ class NetworkChangeReceiver(private val token: String) : BroadcastReceiver() {
                             deleteUploadDataFromDb(context, uploadData)
                         }
                     } else {
-                        Log.e("Errore Upload Background","Errore: ${response.errorBody()!!.string()}")
+                        Log.e("Error Upload Background","Error: ${response.errorBody()!!.string()}")
                     }
                 }
 
                 override fun onFailure(call: Call<ResponseUpload>, t: Throwable) {
-                    Log.e("Errore Upload Background","Errore: Api Call Failure")
+                    Log.e("Error Upload Background","Error: Api Call Failure")
                 }
             })
         } else {
-            Log.e("Errore Upload Background","Errore: File non esistente")
+            Log.e("Error Upload Background","Error: File doesn't exist")
         }
     }
 

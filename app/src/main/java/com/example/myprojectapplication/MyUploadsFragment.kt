@@ -14,9 +14,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.example.myprojectapplication.database.AppDatabase
-import com.example.myprojectapplication.database.UploadDataRepository
-import com.example.myprojectapplication.database.UploadDataViewModel
-import com.example.myprojectapplication.database.UploadDataViewModelFactory
 import com.example.myprojectapplication.repository.InfoAudioRepository
 import com.example.myprojectapplication.utilLogin.forceLogin
 import com.example.myprojectapplication.viewmodel.InfoAudioViewModel
@@ -35,12 +32,6 @@ class MyUploadsFragment : Fragment() {
     private lateinit var uploadsContainer2: LinearLayout
     private lateinit var buttonLocalDb: Button
     private lateinit var btnInfoAudio: Button
-
-    private val uploadDataViewModel: UploadDataViewModel by viewModels {
-        val dao = AppDatabase.getDatabase(requireContext()).uploadDataDao()
-        val repository = UploadDataRepository(dao)
-        UploadDataViewModelFactory(repository)
-    }
 
     private val infoAudioViewModel: InfoAudioViewModel by viewModels {
         val dao = AppDatabase.getDatabase(requireContext()).infoAudioDao()
@@ -118,7 +109,6 @@ class MyUploadsFragment : Fragment() {
         val call = apiService.seeAllUploads("Bearer $token")
 
         call.enqueue(object : Callback<List<ResponseAllUploads>> {
-            @SuppressLint("SuspiciousIndentation")
             override fun onResponse(call: Call<List<ResponseAllUploads>>, response: Response<List<ResponseAllUploads>>) {
                 if (response.isSuccessful) {
                     val uploads = response.body()
@@ -235,7 +225,6 @@ class MyUploadsFragment : Fragment() {
                     Longitude: ${upload.longitude}
                     Latitude: ${upload.latitude}
                     Hidden: ${upload.hidden}
-                    Uploaded: ${upload.uploaded}
                     Possible Actions: 
                 """.trimIndent()
                 setTextColor(resources.getColor(R.color.black, null))
@@ -249,7 +238,6 @@ class MyUploadsFragment : Fragment() {
                     val intent = Intent(context, MoreInfoActivity::class.java).apply {
                         putExtra("uploadId", upload.id)
                         putExtra("token", token)
-                        putExtra("audioFilePath", "${requireActivity().externalCacheDir?.absolutePath}/audiorecordtest.mp3")
                     }
                     context.startActivity(intent)
                 }
