@@ -1,21 +1,29 @@
 package com.example.myprojectapplication
 
-import android.widget.Toast
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.LinearLayout
-import android.widget.TextView
-import androidx.appcompat.app.AlertDialog
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.myprojectapplication.adapter.AllUploadsAdapter
+import com.example.myprojectapplication.adapter.MyUploadsAdapter
 import com.example.myprojectapplication.database.AppDatabase
 import com.example.myprojectapplication.repository.InfoAudioRepository
-import com.example.myprojectapplication.utilLogin.forceLogin
+import com.example.myprojectapplication.utility.utilLogin.forceLogin
+import com.example.myprojectapplication.utility.ApiClient
+import com.example.myprojectapplication.utility.ApiService
+import com.example.myprojectapplication.utility.ResponseAllUploads
+import com.example.myprojectapplication.utility.ResponseDeleteFile
+import com.example.myprojectapplication.utility.ResponseHideFile
+import com.example.myprojectapplication.utility.ResponseMyUploads
+import com.example.myprojectapplication.utility.ResponseShowFile
+import com.example.myprojectapplication.utility.UtilNetwork
 import com.example.myprojectapplication.viewmodel.InfoAudioViewModel
 import com.example.myprojectapplication.viewmodel.InfoAudioViewModelFactory
 import retrofit2.Call
@@ -28,8 +36,8 @@ private const val ARG_USERNAME = "username"
 class MyUploadsFragment : Fragment() {
     private var token: String? = null
     private var username: String? = null
-    private lateinit var uploadsContainer: LinearLayout
-    private lateinit var uploadsContainer2: LinearLayout
+    private lateinit var recyclerViewMyUploads: RecyclerView
+    private lateinit var recyclerViewAllUploads: RecyclerView
     private lateinit var buttonLocalDb: Button
     private lateinit var btnInfoAudio: Button
 
@@ -53,10 +61,13 @@ class MyUploadsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_my_uploads, container, false)
-        uploadsContainer = view.findViewById(R.id.uploadsContainer)
-        uploadsContainer2 = view.findViewById(R.id.uploadsContainer2)
+        recyclerViewMyUploads = view.findViewById(R.id.recyclerViewMyUploads)
+        recyclerViewAllUploads = view.findViewById(R.id.recyclerViewAllUploads)
         buttonLocalDb = view.findViewById(R.id.buttonLocalDb)
         btnInfoAudio = view.findViewById(R.id.buttonLocalDb2)
+
+        recyclerViewMyUploads.layoutManager = LinearLayoutManager(context)
+        recyclerViewAllUploads.layoutManager = LinearLayoutManager(context)
 
         token?.let { fetchMyUploads(it) }
         token?.let { fetchAllUploads(it) }
@@ -130,6 +141,20 @@ class MyUploadsFragment : Fragment() {
                 Toast.makeText(context, "FetchAll Error: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
+    }
+
+    private fun displayMyUploads(uploads: List<ResponseMyUploads>) {
+        val adapter = MyUploadsAdapter(requireContext(), token!!, uploads,
+            { token, id, latitude, longitude -> deleteFile(token, id, latitude, longitude) },
+            { token, id -> showUpload(token, id) },
+            { token, id -> hideUpload(token, id) }
+        )
+        recyclerViewMyUploads.adapter = adapter
+    }
+
+    private fun displayAllUploads(uploads: List<ResponseAllUploads>) {
+        val adapter = AllUploadsAdapter(requireContext(), token!!, uploads)
+        recyclerViewAllUploads.adapter = adapter
     }
 
     private fun deleteFile(token: String, id: Int, latitude: Double, longitude: Double) {
@@ -213,145 +238,6 @@ class MyUploadsFragment : Fragment() {
                 Toast.makeText(context, "Hide Error: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
-    }
-
-    @SuppressLint("SetTextI18n")
-    private fun displayMyUploads(uploads: List<ResponseMyUploads>) {
-        uploadsContainer.removeAllViews()
-        uploads.forEach { upload ->
-            val textView = TextView(context).apply {
-                text = """
-                    ID: ${upload.id}
-                    Longitude: ${upload.longitude}
-                    Latitude: ${upload.latitude}
-                    Hidden: ${upload.hidden}
-                    Possible Actions: 
-                """.trimIndent()
-                setTextColor(resources.getColor(R.color.black, null))
-                textSize = 16f
-                setPadding(0, 16, 0, 16)
-            }
-
-            val moreInfoButton = Button(context).apply {
-                text = "More Info"
-                setOnClickListener {
-                    val intent = Intent(context, MoreInfoActivity::class.java).apply {
-                        putExtra("uploadId", upload.id)
-                        putExtra("token", token)
-                    }
-                    context.startActivity(intent)
-                }
-            }
-
-            val hideFileButton = Button(context).apply {
-                text = "Hide File"
-                visibility = if (upload.hidden == false) View.VISIBLE else View.GONE
-                setOnClickListener {
-                    token?.let { it1 -> showHideConfirmationDialog(it1, upload.id) }
-                }
-            }
-
-            val showFileButton = Button(context).apply {
-                text = "Show File"
-                visibility = if (upload.hidden == true) View.VISIBLE else View.GONE
-                setOnClickListener {
-                    token?.let { it1 -> showShowConfirmationDialog(it1, upload.id) }
-                }
-            }
-
-            val deleteFileButton = Button(context).apply {
-                text = "Delete File"
-                setOnClickListener {
-                    token?.let { it1 -> showDeleteConfirmationDialog(it1, upload.id, upload.latitude, upload.longitude) }
-                }
-            }
-
-            val layout = LinearLayout(context).apply {
-                orientation = LinearLayout.VERTICAL
-                addView(textView)
-                addView(moreInfoButton)
-                addView(hideFileButton)
-                addView(showFileButton)
-                addView(deleteFileButton)
-            }
-            uploadsContainer.addView(layout)
-        }
-    }
-
-    private fun showDeleteConfirmationDialog(token: String, id: Int, latitude: Double, longitude: Double) {
-        val builder = AlertDialog.Builder(requireContext())
-        builder.setMessage("Are you sure you want to delete this file?")
-            .setPositiveButton("Yes") { dialog, _ ->
-                deleteFile(token, id, latitude, longitude)
-            }
-            .setNegativeButton("No") { dialog, _ ->
-                dialog.dismiss()
-            }
-        val alert = builder.create()
-        alert.show()
-    }
-
-    private fun showHideConfirmationDialog(token: String, id: Int) {
-        val builder = AlertDialog.Builder(requireContext())
-        builder.setMessage("Are you sure you want to hide this file?")
-            .setPositiveButton("Yes") { dialog, _ ->
-                hideUpload(token, id)
-            }
-            .setNegativeButton("No") { dialog, _ ->
-                dialog.dismiss()
-            }
-        val alert = builder.create()
-        alert.show()
-    }
-
-    private fun showShowConfirmationDialog(token: String, id: Int) {
-        val builder = AlertDialog.Builder(requireContext())
-        builder.setMessage("Are you sure you want to show this file?")
-            .setPositiveButton("Yes") { dialog, _ ->
-                showUpload(token, id)
-            }
-            .setNegativeButton("No") { dialog, _ ->
-                dialog.dismiss()
-            }
-        val alert = builder.create()
-        alert.show()
-    }
-
-    @SuppressLint("SetTextI18n")
-    private fun displayAllUploads(uploads: List<ResponseAllUploads>) {
-        uploadsContainer2.removeAllViews()
-        uploads.forEach { upload ->
-            val textView = TextView(context).apply {
-                text = """
-                ID: ${upload.id}
-                Longitude: ${upload.longitude}
-                Latitude: ${upload.latitude}
-                Possible Actions:
-            """.trimIndent()
-                setTextColor(resources.getColor(R.color.black, null))
-                textSize = 16f
-                setPadding(0, 16, 0, 16)
-            }
-
-            val moreInfoButton = Button(context).apply {
-                text = "More Info"
-                setOnClickListener {
-                    val intent = Intent(context, MoreInfoActivity::class.java).apply {
-                        putExtra("uploadId", upload.id)
-                        putExtra("token", token)
-                    }
-                    context.startActivity(intent)
-                }
-            }
-
-            val layout = LinearLayout(context).apply {
-                orientation = LinearLayout.VERTICAL
-                addView(textView)
-                addView(moreInfoButton)
-            }
-
-            uploadsContainer2.addView(layout)
-        }
     }
 
     private fun deleteFromInfoAudio(latitude: Double, longitude: Double){

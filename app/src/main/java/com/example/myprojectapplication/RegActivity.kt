@@ -6,7 +6,11 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
-import com.example.myprojectapplication.UtilNetwork.checkConnection
+import com.example.myprojectapplication.utility.UtilNetwork.checkConnection
+import com.example.myprojectapplication.utility.ApiClient
+import com.example.myprojectapplication.utility.ApiService
+import com.example.myprojectapplication.utility.SignUpRequest
+import com.example.myprojectapplication.utility.SignUpResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

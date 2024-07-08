@@ -1,7 +1,8 @@
-package com.example.myprojectapplication
+package com.example.myprojectapplication.utility
 
 import android.content.Context
 import android.content.Intent
+import com.example.myprojectapplication.LogActivity
 
 object utilLogin {
 

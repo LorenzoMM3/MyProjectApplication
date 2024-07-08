@@ -14,10 +14,11 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import android.Manifest
-import android.content.IntentFilter
-import android.net.ConnectivityManager
 import com.example.myprojectapplication.notification.NetworkChangeReceiver
-import com.example.myprojectapplication.notification.NotificationService
+import com.example.myprojectapplication.utility.ApiClient
+import com.example.myprojectapplication.utility.ApiService
+import com.example.myprojectapplication.utility.TokenResponse
+import com.example.myprojectapplication.utility.UtilNetwork
 
 class LogActivity : AppCompatActivity() {
 

@@ -1,10 +1,11 @@
-package com.example.myprojectapplication
+package com.example.myprojectapplication.adapter
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.myprojectapplication.R
 
 class MoreInfoAdapter(private val infoList: List<String>) : RecyclerView.Adapter<MoreInfoAdapter.MoreInfoViewHolder>() {
 

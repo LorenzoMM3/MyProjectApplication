@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/uploadTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        android:paddingBottom="8dp" />
+
+    <Button
+        android:id="@+id/moreInfoButton"
+        android:backgroundTint="@color/green"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="17sp"
+        android:text="More Info" />
+
+    <Button
+        android:id="@+id/hideFileButton"
+        android:layout_width="match_parent"
+        android:backgroundTint="@color/green"
+        android:layout_height="wrap_content"
+        android:text="Hide File"
+        android:textSize="17sp"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/showFileButton"
+        android:layout_width="match_parent"
+        android:backgroundTint="@color/green"
+        android:layout_height="wrap_content"
+        android:text="Show File"
+        android:textSize="17sp"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/deleteFileButton"
+        android:layout_width="match_parent"
+        android:backgroundTint="@color/green"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:textSize="17sp"
+        android:text="Delete File" />
+</LinearLayout>

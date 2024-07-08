@@ -9,11 +9,11 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.util.Log
 import androidx.core.app.NotificationCompat
-import com.example.myprojectapplication.ApiClient
-import com.example.myprojectapplication.ApiService
+import com.example.myprojectapplication.utility.ApiClient
+import com.example.myprojectapplication.utility.ApiService
 import com.example.myprojectapplication.MainActivity
 import com.example.myprojectapplication.R
-import com.example.myprojectapplication.ResponseUpload
+import com.example.myprojectapplication.utility.ResponseUpload
 import com.example.myprojectapplication.database.AppDatabase
 import com.example.myprojectapplication.database.InfoAudio
 import com.example.myprojectapplication.database.UploadData

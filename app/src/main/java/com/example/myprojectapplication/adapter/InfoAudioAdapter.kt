@@ -1,4 +1,4 @@
-package com.example.myprojectapplication.database
+package com.example.myprojectapplication.adapter
 
 import android.annotation.SuppressLint
 import android.media.MediaPlayer
@@ -14,7 +14,9 @@ import com.example.myprojectapplication.R
 import com.example.myprojectapplication.database.InfoAudio
 import java.io.File
 
-class InfoAudioAdapter : ListAdapter<InfoAudio, InfoAudioAdapter.InfoAudioViewHolder>(InfoAudioComparator()) {
+class InfoAudioAdapter : ListAdapter<InfoAudio, InfoAudioAdapter.InfoAudioViewHolder>(
+    InfoAudioComparator()
+) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): InfoAudioViewHolder {
         val view: View = LayoutInflater.from(parent.context)

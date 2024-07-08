@@ -1,11 +1,11 @@
-package com.example.myprojectapplication
+package com.example.myprojectapplication.utility
 
 import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.widget.Toast
-import androidx.core.content.ContextCompat.startActivity
+import com.example.myprojectapplication.InfoAudioActivity
 
 object UtilNetwork {
     fun isNetworkAvailable(context: Context): Boolean {

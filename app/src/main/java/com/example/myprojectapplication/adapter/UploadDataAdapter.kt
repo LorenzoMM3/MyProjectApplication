@@ -1,4 +1,4 @@
-package com.example.myprojectapplication.database
+package com.example.myprojectapplication.adapter
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myprojectapplication.R
+import com.example.myprojectapplication.database.UploadData
 
 class UploadDataAdapter(private var dataList: List<UploadData>) : RecyclerView.Adapter<UploadDataAdapter.UserLocationViewHolder>() {
 

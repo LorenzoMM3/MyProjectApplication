@@ -32,9 +32,14 @@ import retrofit2.Response
 import java.io.File
 import java.io.IOException
 import androidx.lifecycle.lifecycleScope
-import com.example.myprojectapplication.UtilNetwork.isWifiConnected
+import com.example.myprojectapplication.utility.UtilNetwork.isWifiConnected
 import com.example.myprojectapplication.database.InfoAudio
 import com.example.myprojectapplication.database.UploadData
+import com.example.myprojectapplication.utility.ApiClient
+import com.example.myprojectapplication.utility.ApiService
+import com.example.myprojectapplication.utility.ResponseUpload
+import com.example.myprojectapplication.utility.UtilNetwork
+import com.example.myprojectapplication.utility.utilLogin
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -124,7 +129,7 @@ class RecordFragment : Fragment() {
         }
 
         if (latitude != null && longitude != null && username != null) {
-            addResponseToContainer("I am Listening... - latitude: $latitude - longitude: $longitude - username: $username - ")
+            addResponseToContainer("I am Listening... latitude: $latitude, longitude: $longitude.")
             recordingFilePath = "${requireActivity().filesDir.absolutePath}/${username}_${latitude}_${longitude}.mp3"
             recorder = MediaRecorder().apply {
                 setAudioSource(MediaRecorder.AudioSource.MIC)
@@ -260,7 +265,7 @@ class RecordFragment : Fragment() {
     private fun uploadFileDb() {
         val uploadData = UploadData(username!!, latitude!!, longitude!!)
         insertUploadData(uploadData)
-        addResponseToContainer("File Recorded. Metadata written on Database Upload Data.")
+        addResponseToContainer("File Recorded. Metadata saved in 'Ready for Upload'.")
     }
 
     @SuppressLint("SuspiciousIndentation")
@@ -275,7 +280,7 @@ class RecordFragment : Fragment() {
                 if (response.isSuccessful) {
                     val responseUpload = response.body()
                     if (responseUpload != null) {
-                        addResponseToContainer("File Uploaded. Directory: $recordingFilePath")
+                        addResponseToContainer("File Uploaded.")
                         insertInfoAudio(responseUpload, recordingFilePath, longitude!!, latitude!!)
                     }
                 } else {

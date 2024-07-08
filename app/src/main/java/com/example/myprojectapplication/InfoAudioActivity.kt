@@ -10,11 +10,12 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.myprojectapplication.database.InfoAudioAdapter
+import com.example.myprojectapplication.adapter.InfoAudioAdapter
 import com.example.myprojectapplication.viewmodel.InfoAudioViewModel
 import com.example.myprojectapplication.viewmodel.InfoAudioViewModelFactory
 import com.example.myprojectapplication.repository.InfoAudioRepository
 import com.example.myprojectapplication.database.AppDatabase
+import com.example.myprojectapplication.utility.UtilNetwork
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext

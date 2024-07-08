@@ -1,4 +1,4 @@
-package com.example.myprojectapplication
+package com.example.myprojectapplication.utility
 
 import okhttp3.MultipartBody
 import retrofit2.Call

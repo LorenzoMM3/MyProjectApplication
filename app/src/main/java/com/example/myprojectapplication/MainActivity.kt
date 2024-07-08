@@ -2,16 +2,13 @@ package com.example.myprojectapplication
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.content.IntentFilter
-import android.content.pm.PackageManager
-import android.net.ConnectivityManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import com.example.myprojectapplication.notification.NetworkChangeReceiver
 import com.example.myprojectapplication.notification.NotificationService
+import com.example.myprojectapplication.utility.UtilNetwork
 
 class MainActivity : AppCompatActivity() {
 

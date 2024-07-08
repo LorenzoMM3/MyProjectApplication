@@ -46,8 +46,8 @@
             android:textSize="28sp"
             android:textStyle="bold" />
 
-        <LinearLayout
-            android:id="@+id/uploadsContainer"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewMyUploads"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="5dp"
@@ -63,8 +63,8 @@
             android:textSize="28sp"
             android:textStyle="bold" />
 
-        <LinearLayout
-            android:id="@+id/uploadsContainer2"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewAllUploads"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="5dp"
