@@ -40,6 +40,15 @@
         android:text="Play Audio" />
 
     <Button
+        android:id="@+id/btnPauseAudio"
+        android:layout_width="match_parent"
+        android:textSize="17sp"
+        android:textColor="@color/white"
+        android:backgroundTint="@color/green"
+        android:layout_height="wrap_content"
+        android:text="Pause Audio" />
+
+    <Button
         android:id="@+id/btnUploadAudio"
         android:layout_width="match_parent"
         android:textSize="17sp"

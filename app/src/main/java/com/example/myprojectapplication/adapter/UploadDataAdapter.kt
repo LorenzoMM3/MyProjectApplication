@@ -15,6 +15,7 @@ import java.io.File
 class UploadDataAdapter(
     private var dataList: List<UploadData>,
     private val onPlayClick: (UploadData) -> Unit,
+    private val onPauseClick: (UploadData) -> Unit,
     private val onUploadClick: (UploadData) -> Unit,
     private val onDeleteClick: (UploadData) -> Unit
 ) : RecyclerView.Adapter<UploadDataAdapter.UserLocationViewHolder>() {
@@ -24,6 +25,7 @@ class UploadDataAdapter(
         val latitude: TextView = itemView.findViewById(R.id.latitude)
         val longitude: TextView = itemView.findViewById(R.id.longitude)
         val btnPlayAudio: Button = itemView.findViewById(R.id.btnPlayAudio)
+        val btnPauseAudio: Button = itemView.findViewById(R.id.btnPauseAudio)
         val btnUploadAudio: Button = itemView.findViewById(R.id.btnUploadAudio)
         val btnDeleteAudio: Button = itemView.findViewById(R.id.btnDeleteAudio)
     }
@@ -42,6 +44,10 @@ class UploadDataAdapter(
 
         holder.btnPlayAudio.setOnClickListener {
             onPlayClick(currentItem)
+        }
+
+        holder.btnPauseAudio.setOnClickListener {
+            onPauseClick(currentItem)
         }
 
         holder.btnUploadAudio.setOnClickListener {

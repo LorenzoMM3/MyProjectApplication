@@ -40,6 +40,7 @@ class LocalDbActivity : AppCompatActivity() {
     private lateinit var username: String
     private lateinit var clientToken: String
     private lateinit var recyclerView: RecyclerView
+    private var mediaPlayer: MediaPlayer? = null
     private lateinit var btnDeleteAll: Button
     private lateinit var adapter: UploadDataAdapter
     private val uploadDataViewModel: UploadDataViewModel by viewModels {
@@ -63,6 +64,7 @@ class LocalDbActivity : AppCompatActivity() {
         adapter = UploadDataAdapter(
             emptyList(),
             { uploadData -> playAudio(uploadData) },
+            { pauseAudio() },
             { uploadData -> uploadFile(clientToken, uploadData) },
             { uploadData ->
                 val builder = AlertDialog.Builder(this)
@@ -126,6 +128,17 @@ class LocalDbActivity : AppCompatActivity() {
             Toast.makeText(this@LocalDbActivity, "Playing Audio", Toast.LENGTH_SHORT).show()
         } catch (e: Exception) {
             e.printStackTrace()
+        }
+    }
+
+    private fun pauseAudio() {
+        mediaPlayer?.let {
+            if (it.isPlaying) {
+                it.pause()
+                Toast.makeText(this@LocalDbActivity, "Audio Paused", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(this@LocalDbActivity, "No Audio currently Playing", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 

@@ -7,11 +7,19 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myprojectapplication.R
+import com.example.myprojectapplication.database.AppDatabase
 import com.example.myprojectapplication.database.InfoAudio
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 
 class InfoAudioAdapter : ListAdapter<InfoAudio, InfoAudioAdapter.InfoAudioViewHolder>(
@@ -38,9 +46,10 @@ class InfoAudioAdapter : ListAdapter<InfoAudio, InfoAudioAdapter.InfoAudioViewHo
 
         @SuppressLint("SetTextI18n")
         fun bind(infoAudio: InfoAudio) {
-            infoTextView.text = "Longitude: ${infoAudio.longitude}, Latitude: ${infoAudio.latitude}, BPM: ${infoAudio.bpm}, " +
-                    "Danceability: ${infoAudio.danceability}, Loudness: ${infoAudio.loudness}, Mood: ${infoAudio.mood}, " +
-                    "Genre: ${infoAudio.genre}, Instrument: ${infoAudio.instrument}, Audio File Path: ${infoAudio.audioFilePath}"
+            infoTextView.text =
+                "Longitude: ${infoAudio.longitude}, Latitude: ${infoAudio.latitude}, BPM: ${infoAudio.bpm}, " +
+                        "Danceability: ${infoAudio.danceability}, Loudness: ${infoAudio.loudness}, Mood: ${infoAudio.mood}, " +
+                        "Genre: ${infoAudio.genre}, Instrument: ${infoAudio.instrument}, Audio File Path: ${infoAudio.audioFilePath}"
 
             btnPlay.setOnClickListener {
                 playAudio(infoAudio.audioFilePath)
