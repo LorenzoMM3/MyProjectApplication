@@ -26,6 +26,7 @@ import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import kotlinx.coroutines.delay
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -63,8 +64,7 @@ class MapFragment : Fragment() {
             ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION), 1)
         } else {
             getLastKnownLocation()
-            fetchAllUploads(token.toString())
-            fetchMyUploads(token.toString())
+            fetchAllUploads(token!!)
         }
     }
 
@@ -164,8 +164,8 @@ class MapFragment : Fragment() {
                 startActivity(intent)
                 true
             }
-
             mapView.overlays.add(marker)
+            fetchMyUploads(token)
             Log.d("MapFragment", "Marker added at: ${upload.latitude}, ${upload.longitude}")
         }
     }
