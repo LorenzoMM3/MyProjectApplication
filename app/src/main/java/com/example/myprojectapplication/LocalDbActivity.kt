@@ -1,5 +1,6 @@
 package com.example.myprojectapplication
 
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.widget.Button
 import android.widget.Toast
@@ -59,7 +60,28 @@ class LocalDbActivity : AppCompatActivity() {
         btnDeleteAll = findViewById(R.id.btnDeleteAll)
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        adapter = UploadDataAdapter(emptyList())
+        adapter = UploadDataAdapter(
+            emptyList(),
+            { uploadData -> playAudio(uploadData) },
+            { uploadData -> uploadFile(clientToken, uploadData) },
+            { uploadData ->
+                val builder = AlertDialog.Builder(this)
+                builder.setMessage("Do you want to delete this file from this Db? You won't be able to upload it.")
+                    .setPositiveButton("Yes") { dialog, _ ->
+                        lifecycleScope.launch {
+                            deleteUploadDataFromDb(uploadData)
+                            withContext(Dispatchers.Main) {
+                                Toast.makeText(this@LocalDbActivity, "Elements deleted from DB", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    }
+                    .setNegativeButton("No") { dialog, _ ->
+                        dialog.dismiss()
+                    }
+                val alert = builder.create()
+                alert.show()
+            }
+        )
         recyclerView.adapter = adapter
 
         uploadDataViewModel.allUploadData.observe(this, Observer { dataList ->
@@ -77,7 +99,7 @@ class LocalDbActivity : AppCompatActivity() {
 
         val btnUpload: Button = findViewById(R.id.btnUpload)
         btnUpload.setOnClickListener {
-            if(isWifiConnected(this)){
+            if (isWifiConnected(this)) {
                 uploadAllFiles(clientToken)
             } else {
                 val builder = AlertDialog.Builder(this)
@@ -91,7 +113,19 @@ class LocalDbActivity : AppCompatActivity() {
                 val alert = builder.create()
                 alert.show()
             }
+        }
+    }
 
+    private fun playAudio(uploadData: UploadData) {
+        val filePath = "${filesDir.absolutePath}/${uploadData.username}_${uploadData.latitude}_${uploadData.longitude}.mp3"
+        val mediaPlayer = MediaPlayer()
+        try {
+            mediaPlayer.setDataSource(filePath)
+            mediaPlayer.prepare()
+            mediaPlayer.start()
+            Toast.makeText(this@LocalDbActivity, "Playing Audio", Toast.LENGTH_SHORT).show()
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 
@@ -228,6 +262,4 @@ class LocalDbActivity : AppCompatActivity() {
             }
         }
     }
-
-
 }

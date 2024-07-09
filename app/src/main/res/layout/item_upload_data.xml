@@ -28,4 +28,28 @@
         android:text="Longitude"
         android:textSize="20sp"
         android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/btnPlayAudio"
+        android:layout_width="match_parent"
+        android:layout_marginTop="5dp"
+        android:backgroundTint="@color/green"
+        android:layout_height="wrap_content"
+        android:text="Play Audio" />
+
+    <Button
+        android:id="@+id/btnUploadAudio"
+        android:layout_width="match_parent"
+        android:layout_marginTop="5dp"
+        android:backgroundTint="@color/green"
+        android:layout_height="wrap_content"
+        android:text="Upload Audio" />
+
+    <Button
+        android:id="@+id/btnDeleteAudio"
+        android:backgroundTint="@color/green"
+        android:layout_width="match_parent"
+        android:layout_marginBottom="5dp"
+        android:layout_height="wrap_content"
+        android:text="Delete Audio" />
 </LinearLayout>

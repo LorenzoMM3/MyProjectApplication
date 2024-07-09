@@ -22,7 +22,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
         android:backgroundTint="@color/green"
-        android:text="Upload Files"
+        android:text="Upload All Files"
         android:textColor="@color/white"
         android:textSize="18sp" />
 
