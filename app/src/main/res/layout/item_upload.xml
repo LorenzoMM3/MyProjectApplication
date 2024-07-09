@@ -18,6 +18,7 @@
         android:backgroundTint="@color/green"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textColor="@color/white"
         android:textSize="17sp"
         android:text="More Info" />
 
@@ -27,6 +28,7 @@
         android:backgroundTint="@color/green"
         android:layout_height="wrap_content"
         android:text="Hide File"
+        android:textColor="@color/white"
         android:textSize="17sp"
         android:visibility="gone" />
 
@@ -37,6 +39,7 @@
         android:layout_height="wrap_content"
         android:text="Show File"
         android:textSize="17sp"
+        android:textColor="@color/white"
         android:visibility="gone" />
 
     <Button
@@ -45,6 +48,7 @@
         android:backgroundTint="@color/green"
         android:layout_height="wrap_content"
         android:visibility="gone"
+        android:textColor="@color/white"
         android:textSize="17sp"
         android:text="Delete File" />
 </LinearLayout>

@@ -32,7 +32,8 @@
     <Button
         android:id="@+id/btnPlayAudio"
         android:layout_width="match_parent"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="10dp"
+        android:textSize="17sp"
         android:backgroundTint="@color/green"
         android:layout_height="wrap_content"
         android:text="Play Audio" />
@@ -40,7 +41,7 @@
     <Button
         android:id="@+id/btnUploadAudio"
         android:layout_width="match_parent"
-        android:layout_marginTop="5dp"
+        android:textSize="17sp"
         android:backgroundTint="@color/green"
         android:layout_height="wrap_content"
         android:text="Upload Audio" />
@@ -50,6 +51,7 @@
         android:backgroundTint="@color/green"
         android:layout_width="match_parent"
         android:layout_marginBottom="5dp"
+        android:textSize="17sp"
         android:layout_height="wrap_content"
         android:text="Delete Audio" />
 </LinearLayout>
