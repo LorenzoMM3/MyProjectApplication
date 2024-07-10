@@ -9,6 +9,7 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import com.example.myprojectapplication.LogActivity
 import com.example.myprojectapplication.utility.ApiClient
 import com.example.myprojectapplication.utility.ApiService
 import com.example.myprojectapplication.MainActivity
@@ -155,7 +156,7 @@ class NetworkChangeReceiver(private val token: String) : BroadcastReceiver() {
     }
 
     private fun sendNotification(context: Context) {
-        val intent = Intent(context, MainActivity::class.java)
+        val intent = Intent(context, LogActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
         val notificationId = 1
