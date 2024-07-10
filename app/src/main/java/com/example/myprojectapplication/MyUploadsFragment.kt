@@ -167,7 +167,7 @@ class MyUploadsFragment : Fragment() {
                     Toast.makeText(context, "Song deleted successfully!", Toast.LENGTH_SHORT).show()
                     if(response.code()==200){
                         deleteFromInfoAudio(latitude, longitude)
-                        Toast.makeText(context, "Deleted from Info Audio", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "Deleted from Uploaded Audios Info", Toast.LENGTH_SHORT).show()
                     }
                 } else {
                     val errorMessage: String = when (response.code()) {

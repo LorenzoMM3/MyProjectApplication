@@ -167,7 +167,7 @@ class MoreInfoActivity : AppCompatActivity() {
                 mediaPlayer = null
                 Toast.makeText(this@MoreInfoActivity, "Audio Stopped", Toast.LENGTH_SHORT).show()
             } else {
-                Toast.makeText(this@MoreInfoActivity, "No Audio is currrently Playing", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@MoreInfoActivity, "No Audio is currently Playing", Toast.LENGTH_SHORT).show()
             }
         }
     }
