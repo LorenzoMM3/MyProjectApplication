@@ -34,7 +34,6 @@ class MyAccountActivity : AppCompatActivity() {
         val btnGoBack: Button = findViewById(R.id.btnBack1ma)
         val btnDeleteAccount: Button = findViewById(R.id.btnDeleteAccount)
         val textViewUser: TextView = findViewById(R.id.textView2ma)
-        val textViewPsw: TextView = findViewById(R.id.textView3ma)
         val textViewTotUploads: TextView = findViewById(R.id.textView5ma)
         val textViewClientId: TextView = findViewById(R.id.textView6ma)
         val username = intent.getStringExtra("username")
@@ -43,7 +42,6 @@ class MyAccountActivity : AppCompatActivity() {
         val clientToken = intent.getStringExtra("clientToken")
 
         textViewUser.text = "Username: $username"
-        textViewPsw.text = "Password: $password"
         findTotalUploads(clientToken.toString(), object : UploadCountCallback {
             override fun onUploadCountReceived(count: Int) {
                 textViewTotUploads.text = "Total Uploads: $count"
