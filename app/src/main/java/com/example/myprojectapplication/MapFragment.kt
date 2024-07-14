@@ -172,26 +172,31 @@ class MapFragment : Fragment() {
 
     private fun displayMyUploads(uploads: List<ResponseMyUploads>, token: String) {
         uploads.forEach { upload ->
-            val uploadLocation = GeoPoint(upload.latitude, upload.longitude)
-            val marker = Marker(mapView)
-            marker.position = uploadLocation
-            marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
-            marker.title = "ID: ${upload.id}"
+            if(!upload.hidden) {
+                val uploadLocation = GeoPoint(upload.latitude, upload.longitude)
+                val marker = Marker(mapView)
+                marker.position = uploadLocation
+                marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+                marker.title = "ID: ${upload.id}"
 
-            val icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_location_file2) as VectorDrawable
-            marker.icon = icon
+                val icon = ContextCompat.getDrawable(
+                    requireContext(),
+                    R.drawable.ic_location_file2
+                ) as VectorDrawable
+                marker.icon = icon
 
-            marker.setOnMarkerClickListener { _, _ ->
-                val intent = Intent(context, MoreInfoActivity::class.java).apply {
-                    putExtra("uploadId", upload.id)
-                    putExtra("token", token)
+                marker.setOnMarkerClickListener { _, _ ->
+                    val intent = Intent(context, MoreInfoActivity::class.java).apply {
+                        putExtra("uploadId", upload.id)
+                        putExtra("token", token)
+                    }
+                    startActivity(intent)
+                    true
                 }
-                startActivity(intent)
-                true
-            }
 
-            mapView.overlays.add(marker)
-            Log.d("MapFragment", "Marker added at: ${upload.latitude}, ${upload.longitude}")
+                mapView.overlays.add(marker)
+                Log.d("MapFragment", "Marker added at: ${upload.latitude}, ${upload.longitude}")
+            }
         }
     }
 
